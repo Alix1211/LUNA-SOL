@@ -88,6 +88,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .menubtn{position:absolute;left:22px;top:20px;width:46px;height:46px;border-radius:50%;background:var(--glass);border:1px solid var(--line);color:var(--gold);font-size:22px;z-index:45;
  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
 
+#fullscreenBtn{left:auto;top:auto;right:10px;bottom:10px}
+#fullscreenBtn:disabled{opacity:.45;cursor:default}
+#fullscreenBtn:focus-visible{outline:2px solid #ffdfa1;outline-offset:2px}
+
 /* ---------- work ---------- */
 #work{z-index:10;background:radial-gradient(ellipse at 30% 20%,#2a2442,#0f0c1c 70%)}
 #work .bgdeco{position:absolute;inset:0;opacity:.18;filter:blur(18px) saturate(1.2)}

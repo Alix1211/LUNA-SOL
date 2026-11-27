@@ -13,6 +13,27 @@ addEventListener('pagehide',persist);document.addEventListener('visibilitychange
 /* ---------- 화면 맞춤 ---------- */
 function fit(){const vw=innerWidth,vh=innerHeight;W=Math.max(1152,Math.min(1680,Math.round(720*vw/vh)));SC=Math.min(vw/W,vh/720);
  stage.style.setProperty('--W',W+'px');stage.style.width=W+'px';stage.style.transform=`translate(-50%,-50%) scale(${SC})`;fx.resize();Loc.all.forEach(l=>l.render())}
+const fullscreenBtn=$('#fullscreenBtn');
+function syncFullscreen(){
+ const active=!!document.fullscreenElement;
+ const supported=document.fullscreenEnabled&&typeof document.documentElement.requestFullscreen==='function';
+ fullscreenBtn.disabled=!active&&!supported;
+ const label=active?'전체화면 종료':supported?'전체화면':'전체화면을 지원하지 않는 브라우저입니다';
+ fullscreenBtn.title=label;
+ fullscreenBtn.setAttribute('aria-label',label);
+ fullscreenBtn.setAttribute('aria-pressed',String(active));
+ fullscreenBtn.textContent=active?'⊡':'⛶';
+}
+fullscreenBtn.onclick=async()=>{
+ try{
+  if(document.fullscreenElement)await document.exitFullscreen();
+  else await document.documentElement.requestFullscreen();
+ }catch{
+  toast('이 화면에서는 전체화면을 열 수 없어요.');
+ }
+};
+document.addEventListener('fullscreenchange',()=>{syncFullscreen();fit()});
+syncFullscreen();
 function go(n){UI.cur=n;SCR.forEach(s=>$('#'+s).classList.toggle('on',s===n));$('#bgwrap').style.display=(n==='title'||n==='story'||n==='result'||n==='life')?'block':'none';refreshMenuBtn()}
 function refreshMenuBtn(){const b=$('#menuBtn');b.style.display=(S&&S.hub&&(['story','work','life'].includes(UI.cur))&&!UI.menu)?'flex':'none'}
 async function fade(on){const f=$('#fade'),had=f.classList.contains('on');f.classList.toggle('on',on);if(had!==on)await sleep(470)}
