@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LUNA SOL · 황혼의 성</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="story.js"></script>
+<script defer src="game.js"></script>
+</head>
+<body>
+<header class="mast"><a class="wordmark" href="index.html" aria-label="루나솔">LUNA <i>✦</i> SOL</a><span>제1부 · 황혼의 성</span><button id="places" class="utility" type="button" hidden>◇ 장소</button></header>
+<main>
+<section class="world" id="world" aria-label="성의 풍경">
+  <img id="landscape" class="landscape" alt="">
+  <div class="landscrim"></div>
+  <div id="location" class="location"></div>
+  <button id="hotspot" class="hotspot" type="button" hidden><span aria-hidden="true">✦</span><span id="hotspot-label"></span></button>
+  <nav id="map" class="map" aria-label="성의 장소" hidden></nav>
+  <img class="portrait" id="portrait" alt="" hidden>
+  <div class="scene-card">
+    <p id="speaker" class="speaker"></p>
+    <h1 id="scene-title"></h1>
+    <p id="copy"></p>
+    <button class="primary" id="scene-action" type="button"></button>
+  </div>
+</section>
+<section id="work" class="work" aria-label="머지 작업대" hidden>
+  <div class="work-header"><button id="back" class="utility" type="button">← 성으로</button><h1>복원 작업대</h1></div>
+  <div id="board" class="board" role="group" aria-label="8×8 머지판"></div>
+  <aside class="mission-card">
+    <h2 id="mission-title"></h2><p id="mission-tip"></p>
+    <div id="goals"></div>
+    <div id="sources" hidden><h3>공구 상자</h3><div id="source-items"></div></div>
+    <p id="status" class="status" role="status"></p>
+    <button id="apply" class="primary" type="button">복원하기</button>
+  </aside>
+</section>
+</main>
+</body>
+</html>
