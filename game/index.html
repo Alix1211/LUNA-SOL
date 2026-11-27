@@ -27,11 +27,15 @@
 </section>
 <section id="work" class="work" aria-label="머지 작업대" hidden>
   <div class="work-header"><button id="back" class="utility" type="button">← 성으로</button><h1>복원 작업대</h1></div>
+  <section id="sources" class="supply-tray" aria-labelledby="supply-title">
+    <h2 id="supply-title" tabindex="-1">공구 상자 · 꺼낼 재료</h2>
+    <div id="source-items"></div>
+    <p id="supply-status" role="status"></p>
+  </section>
   <div id="board" class="board" role="group" aria-label="8×8 머지판"></div>
   <aside class="mission-card">
     <h2 id="mission-title"></h2><p id="mission-tip"></p>
     <div id="goals"></div>
-    <div id="sources" hidden><h3>공구 상자</h3><div id="source-items"></div></div>
     <p id="status" class="status" role="status"></p>
     <button id="apply" class="primary" type="button">복원하기</button>
   </aside>

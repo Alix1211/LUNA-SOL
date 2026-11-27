@@ -47,7 +47,6 @@ let state = load();
 let persistenceAvailable = true;
 let atWork = false;
 let selection = -1;
-let sourcesOpen = false;
 let status = "";
 let mapOpen = false;
 let visiting = null;
@@ -144,7 +143,7 @@ function drawBoard(mission) {
     else if (item === "box") {
       button.classList.add("source-cell");
       button.append(image("merge/generators/box.webp"));
-      button.setAttribute("aria-expanded", String(sourcesOpen));
+      button.setAttribute("aria-controls", "sources");
     } else if (items[item]) button.append(icon(item));
     if (item && items[item]?.[1] && item === state.board[selection] && index !== selection) button.classList.add("match");
     button.onclick = () => tap(index, mission);
@@ -170,15 +169,20 @@ function drawWork(mission) {
     return row;
   }));
   $("apply").disabled = !mission.goals.every(item => state.board.includes(item));
-  $("sources").hidden = !sourcesOpen;
   const empty = state.board.findIndex((item, i) => !item && unlocked(i, mission.size));
+  $("supply-status").textContent = empty < 0 ? "빈 칸이 필요합니다. 재료를 합치거나 반환하세요." : "";
   const options = mission.inputs.map(item => {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "material";
     b.disabled = empty < 0;
     b.append(icon(item), items[item][0]);
-    b.onclick = () => {state.board[empty] = item; status = items[item][0] + "을(를) 꺼냈습니다."; persist(); drawWork(mission);};
+    b.onclick = () => {state.board[empty] = item; status = items[item][0] + "을(를) 꺼냈습니다."; persist(); drawWork(mission);
+      $("supply-status").textContent = [status, $("supply-status").textContent].filter(Boolean).join(" ");
+      const next = $("source-items").children[mission.inputs.indexOf(item)];
+      if (next && !next.disabled) next.focus({preventScroll:true});
+      else $("supply-title").focus({preventScroll:true});
+    };
     return b;
   });
   if (selection >= 0 && state.board[selection] && !mission.goals.includes(state.board[selection])) {
@@ -194,8 +198,10 @@ function drawWork(mission) {
 function tap(index, mission) {
   const item = state.board[index];
   if (item === "box") {
-    sourcesOpen = !sourcesOpen;
-    status = sourcesOpen ? "필요한 재료를 선택하세요." : "";
+    $("supply-title").focus();
+    $("sources").scrollIntoView({block:"nearest"});
+    $("supply-status").textContent = "필요한 재료를 선택하세요.";
+    return;
   } else if (selection === index) {
     selection = -1;
   } else if (selection >= 0 && item && item === state.board[selection] && items[item]?.[1]) {
@@ -247,7 +253,7 @@ function advance() {
 }
 $("scene-action").onclick = advance;
 $("hotspot").onclick = advance;
-$("back").onclick = () => { atWork = false; selection = -1; sourcesOpen = false; render(); };
+$("back").onclick = () => { atWork = false; selection = -1; render(); };
 $("places").onclick = () => { if (atWork) atWork = false; mapOpen = !mapOpen; render(); };
 $("apply").onclick = () => {
   const mission = currentMission();
@@ -259,7 +265,7 @@ $("apply").onclick = () => {
   state.line = 0;
   atWork = false;
   selection = -1;
-  sourcesOpen = false;
+
   status = "";
   persist();
   render();
