@@ -30,3 +30,52 @@ h1,h2,h3,p{margin:0}h1,h2{font-size:clamp(20px,2.5vw,28px);font-weight:650;line-
 #supply-status{font-size:13px;color:var(--muted)}
 #supply-status:empty{display:none}
 @media(max-width:680px){.supply-tray{gap:6px;padding:7px}.supply-tray .material{min-height:44px;padding-inline:5px}.supply-tray .material img{width:26px;height:26px}}
+
+/* The workshop floats over the place the player is restoring. */
+.mast #fullscreen{margin-left:auto}
+.mast #places{margin-left:0}
+.work{position:relative;isolation:isolate;align-items:start;grid-template-columns:minmax(0,1fr) minmax(245px,340px);padding:16px clamp(10px,2.3vw,30px);overflow:hidden;border:1px solid #b7996d;border-radius:16px;background:#33291e;min-height:min(640px,calc(100svh - 110px))}
+.work-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;pointer-events:none}
+.work::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#170f1220,#241a1366);z-index:-1}
+.work-header{justify-content:space-between;text-shadow:0 1px 6px #18120f;min-width:0}
+.work-header h1{margin-right:auto}
+.board{position:relative;justify-self:end;width:min(100%,610px,max(330px,calc(100svh - 144px)));align-self:start;padding:10px;background:#f9f0dbe0;border:2px solid #bc975e;border-radius:13px;box-shadow:inset 0 0 0 3px #72523270,0 10px 27px #120d0b70;user-select:none}
+.board::before,.board::after{content:"◆";position:absolute;pointer-events:none;z-index:2;font-size:13px;color:#72512c;background:#edcf98;line-height:16px;width:19px;text-align:center;border:1px solid #987344;border-radius:3px}
+.board::before{top:-4px;left:-4px}
+.board::after{bottom:-4px;right:-4px}
+.cell{color:#42362b;background:#fff9ebdc;border-color:#998570;touch-action:none;overflow:hidden}
+.cell:disabled{background:#c7bbaf7d;color:#75685d;border-color:#a8958380}
+.cell[aria-pressed=true],.cell.drop-ready{outline:3px solid #8c5417;outline-offset:-3px;background:#fff0be}
+.cell.match{border:2px dashed #925d27}
+.cell.source-cell{padding:2px 2px 13px;border:2px solid #aa7132;background:linear-gradient(145deg,#fff0c8,#e3be78);box-shadow:inset 0 0 0 1px #fff3c9}
+.source-cell span{position:absolute;bottom:0;left:0;right:0;font-size:clamp(8px,1.05vw,12px);font-weight:800;background:#634520;color:#fff7e7;line-height:14px;white-space:nowrap}
+.movable{cursor:grab}
+.drag-origin img{opacity:.32}
+.drag-ghost{position:fixed;z-index:100;transform:translate(-50%,-70%);pointer-events:none;object-fit:contain;filter:drop-shadow(0 6px 7px #2418118a)}
+.mission-card{color:#34271c;background:#fff8eaeF;border-color:#c4a47a;box-shadow:0 6px 24px #2415105c}
+.mission-card p{color:#564739}
+.mission-card .goal{border-color:#88715765}
+.mission-card .utility,.mission-card .material{color:#38271b;background:#f4e5c9;border-color:#ac9270}
+.mission-card .utility:disabled{opacity:.57}
+.satisfied{color:#355325}
+.storage-controls{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:10px}
+.storage-controls summary{cursor:pointer;padding:7px 0;font-weight:650}
+#stored-items{display:flex;flex-wrap:wrap;gap:5px}
+#stored-items .material{display:flex;align-items:center;gap:4px}
+#stored-items img{width:27px;height:27px}
+@media(prefers-reduced-motion:no-preference){
+  .cell.produced img{animation:arrive 230ms ease-out}
+  .cell.merged img{animation:arrive 320ms cubic-bezier(.2,.85,.3,1.35)}
+  .cell.merged{animation:merge-border 340ms ease-out}
+  .cell.returned img{animation:return 170ms ease-out}
+  @keyframes arrive{from{transform:translateY(-4px) scale(.76);opacity:.55}to{transform:none;opacity:1}}
+  @keyframes merge-border{45%{background:#ffe4a3;box-shadow:inset 0 0 0 2px #a76f24}}
+  @keyframes return{from{transform:scale(.9);opacity:.55}to{transform:none;opacity:1}}
+}
+@media(max-width:680px){
+  .mast #fullscreen,.mast #places{padding-inline:7px;font-size:12px}
+  .wordmark{font-size:19px}
+  .work{grid-template-columns:1fr}
+  .board{justify-self:center;width:100%;padding:6px}
+  .source-cell span{letter-spacing:-.04em;font-size:8px;line-height:12px}
+}

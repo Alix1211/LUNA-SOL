@@ -10,6 +10,9 @@ const items = {
   cracked: ["깨진 석판", "stone"], stone: ["보수용 석판"],
   rag: ["천 조각", "bedroll"], bedroll: ["정돈된 침구"], lamp: ["작은 등불"]
 };
+const producerNames = {
+  iron:"철물함", wood:"목재 더미", twigs:"잔가지 바구니", cracked:"석재 더미", rag:"천 보관함"
+};
 const places = {
   gate: ["성문", "M001"], yard: ["앞마당", "M002"],
   room: ["작은 방", "M003"], garden: ["뒤뜰 정원", null]
@@ -28,10 +31,10 @@ const portraits = {
 
 function newSave() {
   const board = Array(64).fill(null);
-  board[18] = "box";
+
   board[19] = "iron";
   board[20] = "iron";
-  return {version:1, scene:0, line:0, board, repaired:[], ended:false};
+  return {version:1, scene:0, line:0, board, storage:[], repaired:[], ended:false};
 }
 function load() {
   try {
@@ -39,7 +42,11 @@ function load() {
     if (save?.version === 1 && Array.isArray(save.board) && save.board.length === 64 &&
         Number.isInteger(save.scene) && episode[save.scene] &&
         Number.isInteger(save.line) && save.line >= 0 && save.line <= episode[save.scene].lines.length &&
-        Array.isArray(save.repaired)) return save;
+        Array.isArray(save.repaired)) {
+      save.board = save.board.map(item => items[item] ? item : null);
+      save.storage = Array.isArray(save.storage) ? save.storage.filter(item => items[item]) : [];
+      return save;
+    }
   } catch {}
   return newSave();
 }
@@ -126,25 +133,46 @@ function unlocked(i, size) {
   const border = (8 - size) / 2;
   return i % 8 >= border && i % 8 < 8 - border && Math.floor(i / 8) >= border && Math.floor(i / 8) < 8 - border;
 }
+function producerSlots(mission) {
+  const right = (8 + mission.size) / 2 - 1;
+  return new Map(mission.inputs.map((item, i) => [(2 + i) * 8 + right, item]));
+}
+function emptySlot(mission, origin = 29) {
+  const sources = producerSlots(mission);
+  const distance = i => Math.abs(i % 8 - origin % 8) + Math.abs(Math.floor(i / 8) - Math.floor(origin / 8));
+  let slot = -1;
+  state.board.forEach((item, i) => {
+    if (!item && unlocked(i, mission.size) && !sources.has(i) &&
+        (slot < 0 || distance(i) < distance(slot) || (distance(i) === distance(slot) && i % 8 > slot % 8))) slot = i;
+  });
+  return slot;
+}
 function drawBoard(mission) {
   const board = $("board");
   const focused = document.activeElement?.dataset?.cell;
   board.replaceChildren();
+  const sources = producerSlots(mission);
   state.board.forEach((item, index) => {
     const button = document.createElement("button");
     const active = unlocked(index, mission.size);
+    const producer = sources.get(index);
     button.type = "button";
     button.className = "cell";
     button.dataset.cell = String(index);
     button.disabled = !active;
-    button.setAttribute("aria-label", !active ? "잠긴 칸" : item === "box" ? "공구 상자" : items[item]?.[0] || "빈 칸");
+    button.setAttribute("aria-label", !active ? "잠긴 칸" : producer ? producerNames[producer] + " · " + items[producer][0] + " 생산" : items[item]?.[0] || "빈 칸");
     if (active) button.setAttribute("aria-pressed", String(selection === index));
     if (!active) button.textContent = "·";
-    else if (item === "box") {
+    else if (producer) {
       button.classList.add("source-cell");
-      button.append(image("merge/generators/box.webp"));
-      button.setAttribute("aria-controls", "sources");
-    } else if (items[item]) button.append(icon(item));
+      button.append(producer === "iron" ? image("merge/generators/box.webp") : icon(producer));
+      const label = document.createElement("span");
+      label.textContent = producerNames[producer];
+      button.append(label);
+    } else if (items[item]) {
+      button.classList.add("movable");
+      button.append(icon(item));
+    }
     if (item && items[item]?.[1] && item === state.board[selection] && index !== selection) button.classList.add("match");
     button.onclick = () => tap(index, mission);
     board.append(button);
@@ -154,7 +182,7 @@ function drawBoard(mission) {
 function drawWork(mission) {
   drawBoard(mission);
   $("mission-title").textContent = mission.name;
-  $("mission-tip").textContent = "공구 상자에서 재료를 꺼내고, 같은 물건 두 개를 차례로 탭하세요.";
+  $("mission-tip").textContent = "오른쪽 금빛 생산기를 누르세요. 같은 재료 위로 끌어 놓거나 두 칸을 차례로 탭하면 합쳐집니다.";
   $("status").textContent = status || "필요한 물건을 모두 만들면 복원할 수 있습니다.";
   $("goals").replaceChildren(...mission.goals.map(item => {
     const row = document.createElement("div");
@@ -169,70 +197,154 @@ function drawWork(mission) {
     return row;
   }));
   $("apply").disabled = !mission.goals.every(item => state.board.includes(item));
-  const empty = state.board.findIndex((item, i) => !item && unlocked(i, mission.size));
-  $("supply-status").textContent = empty < 0 ? "빈 칸이 필요합니다. 재료를 합치거나 반환하세요." : "";
-  const options = mission.inputs.map(item => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "material";
-    b.disabled = empty < 0;
-    b.append(icon(item), items[item][0]);
-    b.onclick = () => {state.board[empty] = item; status = items[item][0] + "을(를) 꺼냈습니다."; persist(); drawWork(mission);
-      $("supply-status").textContent = [status, $("supply-status").textContent].filter(Boolean).join(" ");
-      const next = $("source-items").children[mission.inputs.indexOf(item)];
-      if (next && !next.disabled) next.focus({preventScroll:true});
-      else $("supply-title").focus({preventScroll:true});
+  $("store-item").disabled = selection < 0 || !state.board[selection];
+  $("storage-count").textContent = String(state.storage.length);
+  const counts = new Map();
+  for (const item of state.storage) counts.set(item, (counts.get(item) || 0) + 1);
+  $("stored-items").replaceChildren(...[...counts].map(([item, count]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "material";
+    button.append(icon(item), items[item][0] + " ×" + count);
+    button.onclick = () => {
+      const slot = emptySlot(mission);
+      if (slot < 0) { $("status").textContent = "꺼내려면 보드에 빈 칸이 필요합니다."; return; }
+      state.storage.splice(state.storage.indexOf(item), 1);
+      state.board[slot] = item;
+      updateBoard(mission, slot, "produced", items[item][0] + "을(를) 꺼냈습니다.");
+      $("storage").querySelector("summary").focus({preventScroll:true});
     };
-    return b;
-  });
-  if (selection >= 0 && state.board[selection] && !mission.goals.includes(state.board[selection])) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "material";
-    b.textContent = "선택 재료 반환";
-    b.onclick = () => {state.board[selection] = null; selection = -1; status = "재료를 공구 상자에 반환했습니다."; persist(); drawWork(mission);};
-    options.push(b);
-  }
-  $("source-items").replaceChildren(...options);
+    return button;
+  }));
+}
+function updateBoard(mission, index, effect, message) {
+  selection = -1;
+  status = message;
+  persist();
+  drawWork(mission);
+  if (index >= 0) $("board").children[index]?.classList.add(effect);
+}
+function canDrop(from, to, mission) {
+  if (from === to || to < 0 || !unlocked(to, mission.size) || producerSlots(mission).has(to)) return false;
+  const item = state.board[from];
+  const target = state.board[to];
+  return Boolean(item && (!target || (target === item && items[item][1])));
+}
+function drop(from, to, mission) {
+  if (!canDrop(from, to, mission)) return false;
+  const merged = Boolean(state.board[to]);
+  const item = state.board[from];
+  state.board[to] = merged ? items[item][1] : item;
+  state.board[from] = null;
+  updateBoard(mission, to, merged ? "merged" : "produced", items[state.board[to]][0] + (merged ? " 제작 완료" : " 이동 완료"));
+  return true;
 }
 function tap(index, mission) {
+  const producer = producerSlots(mission).get(index);
   const item = state.board[index];
-  if (item === "box") {
-    $("supply-title").focus();
-    $("sources").scrollIntoView({block:"nearest"});
-    $("supply-status").textContent = "필요한 재료를 선택하세요.";
+  if (producer) {
+    const slot = emptySlot(mission, index);
+    if (slot < 0) { $("status").textContent = "보드가 가득 찼습니다. 재료를 합치거나 보관하세요."; return; }
+    state.board[slot] = producer;
+    updateBoard(mission, slot, "produced", items[producer][0] + " 1개 생산");
     return;
-  } else if (selection === index) {
-    selection = -1;
-  } else if (selection >= 0 && item && item === state.board[selection] && items[item]?.[1]) {
-    state.board[index] = items[item][1];
-    state.board[selection] = null;
-    status = items[state.board[index]][0] + " 제작 완료";
-    selection = -1;
-    persist();
-  } else if (!item && selection >= 0) {
-    state.board[index] = state.board[selection];
-    state.board[selection] = null;
-    selection = -1;
-    persist();
-  } else if (item) {
-    selection = index;
-    status = items[item][0] + " 선택";
   }
+  if (selection >= 0 && drop(selection, index, mission)) return;
+  selection = item && selection !== index ? index : -1;
+  status = selection < 0 ? "" : items[item][0] + " 선택";
   drawWork(mission);
 }
-function prepareMission() {
-  if (currentMission()?.id === "M003" && !state.board.includes("lamp")) {
-    const free = state.board.indexOf(null);
-    if (free >= 0) state.board[free] = "lamp";
+function prepareMission(mission) {
+  for (const index of producerSlots(mission).keys()) {
+    if (!state.board[index]) continue;
+    const slot = emptySlot(mission, index);
+    const item = state.board[index];
+    state.board[index] = null;
+    if (slot >= 0) state.board[slot] = item;
+    else state.storage.push(item);
+  }
+  if (mission.id === "M003" && !state.board.includes("lamp") && !state.storage.includes("lamp")) {
+    const slot = emptySlot(mission);
+    if (slot >= 0) state.board[slot] = "lamp";
+    else state.storage.push("lamp");
   }
 }
+
+const board = $("board");
+let drag = null;
+let suppressClick = false;
+const cellAt = element => Number(element?.closest?.(".cell")?.dataset.cell ?? -1);
+function clearHover() {
+  board.querySelector(".drop-ready")?.classList.remove("drop-ready");
+}
+function cancelDrag() {
+  if (!drag) return;
+  clearHover();
+  drag.ghost?.remove();
+  board.children[drag.from]?.classList.remove("drag-origin");
+  if (board.hasPointerCapture?.(drag.id)) board.releasePointerCapture(drag.id);
+  drag = null;
+}
+board.addEventListener("pointerdown", event => {
+  if (!event.isPrimary || event.button !== 0 || drag) return;
+  suppressClick = false;
+  const from = cellAt(event.target);
+  if (event.target.closest(".movable") && atWork && state.board[from]) {
+    drag = {id:event.pointerId, from, x:event.clientX, y:event.clientY, ghost:null};
+  }
+});
+board.addEventListener("pointermove", event => {
+  if (!drag || drag.id !== event.pointerId) return;
+  if (!drag.ghost) {
+    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 7) return;
+    const cell = board.children[drag.from];
+    drag.ghost = icon(state.board[drag.from]);
+    drag.ghost.className = "drag-ghost";
+    drag.ghost.style.width = cell.offsetWidth + "px";
+    drag.ghost.style.height = cell.offsetHeight + "px";
+    document.body.append(drag.ghost);
+    cell.classList.add("drag-origin");
+    board.setPointerCapture(event.pointerId);
+  }
+  drag.ghost.style.left = event.clientX + "px";
+  drag.ghost.style.top = event.clientY + "px";
+  clearHover();
+  const to = cellAt(document.elementFromPoint(event.clientX, event.clientY));
+  const mission = currentMission();
+  if (mission && canDrop(drag.from, to, mission)) board.children[to].classList.add("drop-ready");
+});
+board.addEventListener("pointerup", event => {
+  if (!drag || drag.id !== event.pointerId) return;
+  const {from, ghost} = drag;
+  const to = cellAt(document.elementFromPoint(event.clientX, event.clientY));
+  cancelDrag();
+  if (!ghost) return;
+  suppressClick = true;
+  const mission = currentMission();
+  if (mission && !drop(from, to, mission)) {
+    board.children[from]?.classList.remove("returned");
+    requestAnimationFrame(() => board.children[from]?.classList.add("returned"));
+    $("status").textContent = "재료를 원래 칸에 두었습니다.";
+  }
+});
+board.addEventListener("pointercancel", cancelDrag);
+board.addEventListener("pointerleave", () => { if (drag && !drag.ghost) cancelDrag(); });
+board.addEventListener("lostpointercapture", cancelDrag);
+board.addEventListener("click", event => {
+  if (!suppressClick || event.detail === 0) return;
+  suppressClick = false;
+  event.stopImmediatePropagation();
+}, true);
+
 function render() {
   const mission = currentMission();
   atWork = Boolean(atWork && mission);
   $("world").hidden = atWork;
   $("work").hidden = !atWork;
-  if (atWork) drawWork(mission);
+  if (atWork) {
+    $("work-bg").src = $("landscape").src;
+    drawWork(mission);
+  }
   else drawWorld(mission);
   if (!persistenceAvailable) $("location").title = "이 브라우저에서는 진행을 저장할 수 없습니다.";
 }
@@ -241,7 +353,7 @@ function advance() {
   else if (state.after) state.after = null;
   else if (currentMission()) {
     atWork = true;
-    prepareMission();
+    prepareMission(currentMission());
   } else if (!state.ended) {
     if (state.line + 1 < episode[state.scene].lines.length) state.line++;
     else if (missions[state.scene]) state.line = episode[state.scene].lines.length;
@@ -253,11 +365,12 @@ function advance() {
 }
 $("scene-action").onclick = advance;
 $("hotspot").onclick = advance;
-$("back").onclick = () => { atWork = false; selection = -1; render(); };
-$("places").onclick = () => { if (atWork) atWork = false; mapOpen = !mapOpen; render(); };
+$("back").onclick = () => { cancelDrag(); atWork = false; selection = -1; render(); };
+$("places").onclick = () => { cancelDrag(); if (atWork) atWork = false; mapOpen = !mapOpen; render(); };
 $("apply").onclick = () => {
   const mission = currentMission();
   if (!mission || !mission.goals.every(item => state.board.includes(item))) return;
+  cancelDrag();
   for (const item of mission.goals) state.board[state.board.indexOf(item)] = null;
   state.repaired.push(mission.id);
   state.after = mission.place;
@@ -270,4 +383,32 @@ $("apply").onclick = () => {
   persist();
   render();
 };
+$("store-item").onclick = () => {
+  const mission = currentMission();
+  const item = state.board[selection];
+  if (!mission || !item) return;
+  state.storage.push(item);
+  state.board[selection] = null;
+  updateBoard(mission, -1, "", items[item][0] + " 보관 완료");
+  $("storage").querySelector("summary").focus({preventScroll:true});
+};
+const fullscreen = $("fullscreen");
+async function toggleFullscreen() {
+  if (document.fullscreenElement) {
+    await document.exitFullscreen();
+  } else if (document.fullscreenEnabled) {
+    try { await document.documentElement.requestFullscreen(); }
+    catch { fullscreen.title = "브라우저에서 전체화면을 허용하지 않습니다."; }
+  }
+}
+function updateFullscreen() {
+  const active = Boolean(document.fullscreenElement);
+  fullscreen.disabled = !document.fullscreenEnabled && !active;
+  if (fullscreen.disabled) fullscreen.title = "이 브라우저에서는 전체화면을 지원하지 않습니다.";
+  fullscreen.setAttribute("aria-pressed", String(active));
+  fullscreen.textContent = active ? "↙ 전체화면 종료" : "⛶ 전체화면";
+}
+fullscreen.onclick = toggleFullscreen;
+document.addEventListener("fullscreenchange", updateFullscreen);
+updateFullscreen();
 render();

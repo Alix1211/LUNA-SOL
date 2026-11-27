@@ -9,7 +9,7 @@
 <script defer src="game.js"></script>
 </head>
 <body>
-<header class="mast"><a class="wordmark" href="index.html" aria-label="루나솔">LUNA <i>✦</i> SOL</a><span>제1부 · 황혼의 성</span><button id="places" class="utility" type="button" hidden>◇ 장소</button></header>
+<header class="mast"><a class="wordmark" href="index.html" aria-label="루나솔">LUNA <i>✦</i> SOL</a><span>제1부 · 황혼의 성</span><button id="fullscreen" class="utility" type="button" aria-pressed="false">⛶ 전체화면</button><button id="places" class="utility" type="button" hidden>◇ 장소</button></header>
 <main>
 <section class="world" id="world" aria-label="성의 풍경">
   <img id="landscape" class="landscape" alt="">
@@ -26,16 +26,16 @@
   </div>
 </section>
 <section id="work" class="work" aria-label="머지 작업대" hidden>
+  <img class="work-bg" id="work-bg" aria-hidden="true" alt="">
   <div class="work-header"><button id="back" class="utility" type="button">← 성으로</button><h1>복원 작업대</h1></div>
-  <section id="sources" class="supply-tray" aria-labelledby="supply-title">
-    <h2 id="supply-title" tabindex="-1">공구 상자 · 꺼낼 재료</h2>
-    <div id="source-items"></div>
-    <p id="supply-status" role="status"></p>
-  </section>
   <div id="board" class="board" role="group" aria-label="8×8 머지판"></div>
   <aside class="mission-card">
     <h2 id="mission-title"></h2><p id="mission-tip"></p>
     <div id="goals"></div>
+    <div class="storage-controls">
+      <button id="store-item" class="utility" type="button" disabled>선택 재료 보관</button>
+      <details id="storage"><summary>보관함 <span id="storage-count">0</span></summary><div id="stored-items"></div></details>
+    </div>
     <p id="status" class="status" role="status"></p>
     <button id="apply" class="primary" type="button">복원하기</button>
   </aside>
