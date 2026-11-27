@@ -127,14 +127,13 @@ function drawWorld(mission) {
   $("hotspot-label").textContent = mission?.name || "";
   const btn = $("scene-action");
   const dialogue = !visiting && !state.ended && !state.after && !mission;
-  btn.hidden = state.ended && !visiting;
   btn.classList.toggle("dialogue-next", dialogue);
   btn.classList.toggle("primary", !dialogue);
   if (dialogue) btn.setAttribute("aria-label", "다음 대사");
   else btn.removeAttribute("aria-label");
   const afterLabel = {gate:"앞마당으로", yard:"작은 방으로", room:"대화로 돌아가기"};
   btn.textContent = dialogue ? "›" : visiting ? "이야기로 돌아가기" :
-    mission ? "작업대 열기" : afterLabel[state.after] || "";
+    state.ended ? "1화 다시 시작" : mission ? "작업대 열기" : afterLabel[state.after] || "";
 }
 function unlocked(i, size) {
   const border = (8 - size) / 2;
@@ -410,6 +409,13 @@ function render() {
 }
 function advance() {
   if (visiting) visiting = null;
+  else if (state.ended) {
+    state = newSave();
+    atWork = false;
+    selection = -1;
+    status = "";
+    mapOpen = false;
+  }
   else if (state.after) state.after = null;
   else if (currentMission()) {
     atWork = true;
