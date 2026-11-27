@@ -1,7 +1,8 @@
 "use strict";
 
 const ASSETS = "../assets/";
-const SAVE_KEY = "lunasol.castle.r1";
+const directWorkshop = new URLSearchParams(location.search).has("workshop") || location.pathname.endsWith("LUNA_SOL_WORKSHOP.html");
+const SAVE_KEY = directWorkshop ? "lunasol.workshop.r1" : "lunasol.castle.r1";
 const BACKUP_KEY = SAVE_KEY + ".previous";
 const $ = (id) => document.getElementById(id);
 const items = {
@@ -73,7 +74,16 @@ function readSave(key) {
 function load() {
   return readSave(SAVE_KEY) || readSave(BACKUP_KEY) || newSave();
 }
+// The castle household builds up its own supplies before villagers arrive.
+orderPlans.splice(0, orderPlans.length,
+  {name:"겨울 장작 선반 채우기", goals:["plank","plank"], reward:2},
+  {name:"손님방 침구 비축", goals:["bedroll","bedroll"], reward:2},
+  {name:"수리용 철물 비축", goals:["ingot","latch"], reward:3});
+for (const plan of [...Object.values(furniturePlans), ...orderPlans]) plan.inputs = ["wood","iron","rag"];
 let state = load();
+if (directWorkshop && !state.ended && state.chapter === 1 && !state.repaired.length) {
+  Object.assign(state,{scene:episode.length-1,ended:true,repaired:["M001","M002","M003"]});
+}
 let persistenceAvailable = true;
 let atWork = false;
 let selection = -1;
@@ -468,6 +478,26 @@ window.addEventListener("pointerup", endDrag);
 window.addEventListener("pointercancel", event => { if (drag?.id === event.pointerId) cancelDrag(); });
 window.addEventListener("blur", cancelDrag);
 board.addEventListener("lostpointercapture", event => { if (drag?.id === event.pointerId) cancelDrag(); });
+function drawWorkshopChoices(mission) {
+  let box = $("work-choices");
+  if (!box) {
+    box = document.createElement("div"); box.id = "work-choices";
+    $("mission-title").before(box);
+  }
+  box.replaceChildren();
+  if (!mission.residence) return;
+  $("mission-tip").textContent = status || (mission.id === "chair" ? "아일라　“침대 끝에 걸터앉아 먹는 것도 어제까지야. 창가에 의자 하나 놓자.”" : mission.id === "table" ? "아일라　“찻잔을 바닥에 두니까 자꾸 발에 걸리네. 작은 탁자면 되겠어.”" : "아일라　“다음에 또 찾으러 다니지 않게, 쓰고 남은 건 여기다 모아 두자.”");
+  for (const job of Object.values(residenceJobs(state.home))) {
+    const b = document.createElement("button");
+    b.className = "utility"; b.textContent = job.name; b.disabled = job.id === mission.id;
+    b.onclick = () => chooseResidenceJob(job.id); box.append(b);
+  }
+  if (mission.reward) $("mission-tip").textContent += "  비축 +" + mission.reward + " · 비축 4마다 창고 한 칸 확장 (최대 8칸)";
+}
+function enterWorkshop() {
+  atResidence = true;
+  chooseResidenceJob(Object.keys(residenceJobs(state.home))[0]);
+}
 function render() {
   const mission = currentMission();
   atWork = Boolean(atWork && mission);
@@ -477,11 +507,13 @@ function render() {
   if (atWork) {
     $("work-bg").src = $("landscape").src;
     drawWork(mission);
+    drawWorkshopChoices(mission);
   }
   else {
     drawWorld(mission);
     drawRoom();
     drawResidence();
+    syncWorkshopLabels();
   }
   if (!persistenceAvailable) $("location").title = "이 브라우저에서는 진행을 저장할 수 없습니다.";
 }
@@ -496,7 +528,7 @@ function advance() {
     if (state.line + 1 < activeScene().lines.length) state.line++;
     else if (scriptedMission()) state.line = activeScene().lines.length;
     else if (state.scene + 1 < episodes[state.chapter].length) { state.scene++; state.line = 0; }
-    else { state.ended = true; atResidence = true; }
+    else { state.ended = true; enterWorkshop(); return; }
   }
   persist();
   render();
@@ -506,7 +538,7 @@ $("hotspot").onclick = advance;
 $("back").onclick = () => { cancelDrag(); atWork = false; selection = -1; activeResidenceJob = null; render(); };
 $("places").onclick = () => { cancelDrag(); if (atWork) atWork = false; mapOpen = !mapOpen; render(); };
 function storageCapacity() {
-  return state.home.expanded ? residenceStorageUpgrade.capacity : baseStorageCapacity;
+  return (state.home.expanded ? residenceStorageUpgrade.capacity : baseStorageCapacity) + Math.min(8, Math.floor(state.home.gold / 4));
 }
 function deliver(index, mission) {
   const item = state.board[index];
@@ -528,11 +560,15 @@ function deliver(index, mission) {
     if (mission.reward) {
       state.home.gold += mission.reward;
       state.home.orders += 1;
-      residenceMessage = "주문 완료 · " + mission.reward + "골드";
+      residenceMessage = "비축 완료 · 창고 " + storageCapacity() + "칸";
     } else {
       state.home.owned[mission.id] = true;
-      residenceMessage = residenceFurniture[mission.id].name + " 완성 · 배치할 장소를 선택하세요.";
+      state.home.placed[mission.id] = 0;
+      residenceMessage = residenceFurniture[mission.id].name + " 완성 · 작은 방에 놓았습니다.";
     }
+    enterWorkshop();
+    status = residenceMessage;
+    render(); return;
   } else {
     state.repaired.push(mission.id);
     if (state.chapter === 1) state.after = mission.place;
@@ -644,4 +680,10 @@ function updateFullscreen() {
 fullscreen.onclick = toggleFullscreen;
 document.addEventListener("fullscreenchange", updateFullscreen);
 updateFullscreen();
-render();
+$("residence-jobs").previousElementSibling.textContent = "내 작업대";
+function syncWorkshopLabels() {
+  $("residence-gold").textContent = "생활 비축 " + state.home.gold;
+  $("expand-storage").hidden = true;
+  for (const button of $("residence-jobs").children) button.textContent = button.textContent.replace(/골드/g," 비축");
+}
+if (state.ended) { render(); enterWorkshop(); } else render();
