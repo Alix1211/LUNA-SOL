@@ -50,7 +50,9 @@ h1,h2,h3,p{margin:0}h1,h2{font-size:clamp(20px,2.5vw,28px);font-weight:650;line-
 .cell.source-cell{padding:2px 2px 13px;border:2px solid #aa7132;background:linear-gradient(145deg,#fff0c8,#e3be78);box-shadow:inset 0 0 0 1px #fff3c9}
 .source-cell span{position:absolute;bottom:0;left:0;right:0;font-size:clamp(8px,1.05vw,12px);font-weight:800;background:#634520;color:#fff7e7;line-height:14px;white-space:nowrap}
 .movable{cursor:grab}
-.drag-origin img{opacity:.32}
+.drag-origin img{opacity:.2}
+.board{touch-action:none;-webkit-touch-callout:none}
+.merge-flight{position:fixed;z-index:100;pointer-events:none;object-fit:contain}
 .drag-ghost{position:fixed;z-index:100;transform:translate(-50%,-70%);pointer-events:none;object-fit:contain;filter:drop-shadow(0 6px 7px #2418118a)}
 .mission-card{color:#34271c;background:#fff8eaeF;border-color:#c4a47a;box-shadow:0 6px 24px #2415105c}
 .mission-card p{color:#564739}
@@ -65,8 +67,12 @@ h1,h2,h3,p{margin:0}h1,h2{font-size:clamp(20px,2.5vw,28px);font-weight:650;line-
 #stored-items img{width:27px;height:27px}
 @media(prefers-reduced-motion:no-preference){
   .cell.produced img{animation:arrive 230ms ease-out}
-  .cell.merged img{animation:arrive 320ms cubic-bezier(.2,.85,.3,1.35)}
-  .cell.merged{animation:merge-border 340ms ease-out}
+  .cell.merged img{animation:merge-pop 390ms ease-out both}
+  .cell.merged{animation:merge-border 390ms ease-out}
+  .cell.merged::after{content:"";position:absolute;inset:15%;border:3px solid #b47726;border-radius:50%;pointer-events:none;animation:merge-ring 360ms ease-out both}
+  .cell.drag-merged img,.cell.drag-merged::after,.cell.drag-merged{animation-delay:150ms}
+  @keyframes merge-pop{0%{transform:scale(.28);opacity:0}48%{transform:scale(1.3);opacity:1}72%{transform:scale(.94)}100%{transform:scale(1)}}
+  @keyframes merge-ring{from{transform:scale(.3);opacity:.95}to{transform:scale(1.6);opacity:0}}
   .cell.returned img{animation:return 170ms ease-out}
   @keyframes arrive{from{transform:translateY(-4px) scale(.76);opacity:.55}to{transform:none;opacity:1}}
   @keyframes merge-border{45%{background:#ffe4a3;box-shadow:inset 0 0 0 2px #a76f24}}

@@ -271,65 +271,118 @@ function prepareMission(mission) {
 }
 
 const board = $("board");
+const dragThreshold = 6;
+const mergeFlightTime = 150;
 let drag = null;
 let suppressClick = false;
-const cellAt = element => Number(element?.closest?.(".cell")?.dataset.cell ?? -1);
+
+function cellAt(x, y) {
+  const cell = document.elementFromPoint(x, y)?.closest(".cell");
+  return cell && board.contains(cell) ? Number(cell.dataset.cell) : -1;
+}
 function clearHover() {
   board.querySelector(".drop-ready")?.classList.remove("drop-ready");
 }
 function cancelDrag() {
   if (!drag) return;
-  clearHover();
-  drag.ghost?.remove();
-  board.children[drag.from]?.classList.remove("drag-origin");
-  if (board.hasPointerCapture?.(drag.id)) board.releasePointerCapture(drag.id);
+  const active = drag;
   drag = null;
+  clearHover();
+  active.ghost?.remove();
+  active.cell.classList.remove("drag-origin");
+  if (active.cell.hasPointerCapture?.(active.id)) active.cell.releasePointerCapture(active.id);
 }
-board.addEventListener("pointerdown", event => {
-  if (!event.isPrimary || event.button !== 0 || drag) return;
+function startDrag(event) {
+  if (event.isPrimary === false || event.button !== 0 || !atWork || drag) return;
   suppressClick = false;
-  const from = cellAt(event.target);
-  if (event.target.closest(".movable") && atWork && state.board[from]) {
-    drag = {id:event.pointerId, from, x:event.clientX, y:event.clientY, ghost:null};
-  }
-});
-board.addEventListener("pointermove", event => {
-  if (!drag || drag.id !== event.pointerId) return;
+  const cell = event.target.closest(".cell");
+  if (!cell || cell.disabled) return;
+  drag = {
+    id:event.pointerId, from:Number(cell.dataset.cell), cell,
+    x:event.clientX, y:event.clientY, ghost:null, movable:cell.classList.contains("movable")
+  };
+  // Capture on the original cell from contact, including quick swipes across a cell edge.
+  // A stationary touch still generates the cell's normal click.
+  try { cell.setPointerCapture(event.pointerId); }
+  catch { /* Window listeners still track this pointer if capture is unavailable. */ }
+}
+function moveDrag(event) {
+  if (drag?.id !== event.pointerId || !drag.movable) return;
   if (!drag.ghost) {
-    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 7) return;
-    const cell = board.children[drag.from];
+    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < dragThreshold) return;
     drag.ghost = icon(state.board[drag.from]);
     drag.ghost.className = "drag-ghost";
-    drag.ghost.style.width = cell.offsetWidth + "px";
-    drag.ghost.style.height = cell.offsetHeight + "px";
+    drag.ghost.style.width = drag.cell.offsetWidth + "px";
+    drag.ghost.style.height = drag.cell.offsetHeight + "px";
     document.body.append(drag.ghost);
-    cell.classList.add("drag-origin");
-    board.setPointerCapture(event.pointerId);
+    drag.cell.classList.add("drag-origin");
   }
+  if (event.cancelable) event.preventDefault();
   drag.ghost.style.left = event.clientX + "px";
   drag.ghost.style.top = event.clientY + "px";
   clearHover();
-  const to = cellAt(document.elementFromPoint(event.clientX, event.clientY));
+  const to = cellAt(event.clientX, event.clientY);
   const mission = currentMission();
   if (mission && canDrop(drag.from, to, mission)) board.children[to].classList.add("drop-ready");
-});
-board.addEventListener("pointerup", event => {
-  if (!drag || drag.id !== event.pointerId) return;
-  const {from, ghost} = drag;
-  const to = cellAt(document.elementFromPoint(event.clientX, event.clientY));
-  cancelDrag();
-  if (!ghost) return;
-  suppressClick = true;
+}
+function animateMerge(item, dragged, target) {
+  if (!Element.prototype.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const x = target.left + target.width / 2;
+  const y = target.top + target.height / 2;
+  for (const [start, scale] of [[dragged,.35],[target,.45]]) {
+    const sprite = icon(item);
+    sprite.className = "merge-flight";
+    Object.assign(sprite.style,{left:start.left+"px",top:start.top+"px",width:start.width+"px",height:start.height+"px"});
+    document.body.append(sprite);
+    const dx = x - start.left - start.width / 2;
+    const dy = y - start.top - start.height / 2;
+    const motion = sprite.animate([
+      {transform:"scale(1)",opacity:1},
+      {transform:`translate(${dx}px,${dy}px) scale(${scale})`,opacity:.15}
+    ], {duration:mergeFlightTime,easing:"cubic-bezier(.3,.14,.75,1)"});
+    motion.onfinish = motion.oncancel = () => sprite.remove();
+  }
+}
+function endDrag(event) {
+  if (drag?.id !== event.pointerId) return;
+  const {from, ghost, movable} = drag;
+  const moved = ghost || Math.hypot(event.clientX - drag.x, event.clientY - drag.y) >= dragThreshold;
+  const to = cellAt(event.clientX, event.clientY);
   const mission = currentMission();
-  if (mission && !drop(from, to, mission)) {
+  if (!moved || !movable) {
+    cancelDrag();
+    // Some touch browsers discard the first synthesized click after a drag.
+    if (event.pointerType === "touch" || event.pointerType === "pen" || moved) {
+      suppressClick = true;
+      if (!moved && mission && from === to) tap(from, mission);
+    }
+    return;
+  }
+  suppressClick = true;
+  const allowed = mission && canDrop(from, to, mission);
+  const merged = allowed && Boolean(state.board[to]);
+  const oldItem = state.board[from];
+  const dragged = merged ? (ghost ?? drag.cell).getBoundingClientRect() : null;
+  const target = merged ? board.children[to].getBoundingClientRect() : null;
+  cancelDrag();
+  if (allowed) {
+    drop(from, to, mission);
+    if (merged) {
+      board.children[to].classList.add("drag-merged");
+      animateMerge(oldItem, dragged, target);
+    }
+  } else {
     board.children[from]?.classList.remove("returned");
     requestAnimationFrame(() => board.children[from]?.classList.add("returned"));
     $("status").textContent = "재료를 원래 칸에 두었습니다.";
   }
-});
-board.addEventListener("pointercancel", cancelDrag);
-board.addEventListener("pointerleave", () => { if (drag && !drag.ghost) cancelDrag(); });
-board.addEventListener("lostpointercapture", cancelDrag);
+}
+board.addEventListener("pointerdown", startDrag);
+window.addEventListener("pointermove", moveDrag, {passive:false});
+window.addEventListener("pointerup", endDrag);
+window.addEventListener("pointercancel", event => { if (drag?.id === event.pointerId) cancelDrag(); });
+window.addEventListener("blur", cancelDrag);
+board.addEventListener("lostpointercapture", event => { if (drag?.id === event.pointerId) cancelDrag(); });
 board.addEventListener("click", event => {
   if (!suppressClick || event.detail === 0) return;
   suppressClick = false;
