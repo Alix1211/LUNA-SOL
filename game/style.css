@@ -95,3 +95,34 @@ box-shadow:inset 0 0 0 2px #503524,inset 0 0 0 4px #e5cda7,0 0 0 1px #503524,0 1
 @media(max-width:680px){
   .scene-card:has(.dialogue-next){padding-right:59px}
 }
+
+/* Layered room and its right-hand furnishing / workshop controls. */
+.room-view .landscape{object-fit:fill}
+.room-objects{position:absolute;inset:0;pointer-events:none;z-index:-1}
+.room-objects img{position:absolute;height:auto;transform:translate(-50%,-84%);filter:drop-shadow(5px 8px 7px #180f0c91)}
+.room-view .portrait{z-index:0}
+.residence{position:absolute;right:clamp(12px,2.8vw,38px);top:18%;bottom:auto;width:clamp(255px,28%,350px);max-height:78%;overflow:auto;overscroll-behavior:contain;padding:clamp(12px,1.8vw,22px);background:linear-gradient(135deg,#30251fed,#211714f5);border:1px solid #bf9567;border-radius:12px;box-shadow:0 12px 35px #170f0bb0;color:var(--ink)}
+.residence-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#residence-gold{color:#ebc787;font-size:14px;font-weight:750;white-space:nowrap}
+#residence-feedback{font-size:14px;margin:8px 0;color:#ecce9e}
+.residence-group{padding:8px 0;border-top:1px solid #ad8b6255}
+.residence-group h2{font-size:15px;font-weight:700;margin:0 0 8px}
+.furniture-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:5px 0}
+.furniture-choice strong{grid-column:1/-1;font-size:13px;font-weight:650;color:#cbb99e}
+.furniture-choice button{padding-inline:5px}
+.furniture-choice button[aria-pressed=true]{color:#21170e;background:#e4ba7f;border-color:#f8d7a1}
+#residence-jobs{display:grid;gap:6px}
+#residence-jobs button{text-align:left}
+#expand-storage{width:100%;margin-top:7px}
+.residence .utility:disabled{opacity:.55}
+#deliver-selection{min-height:54px;border:2px dashed #8d5d32}
+#deliver-selection[aria-disabled=true]{background:#eee1c9;color:#6f573d}
+#deliver-selection.delivery-highlight{background:#ffd089;color:#29180a;outline:3px solid #a46834;outline-offset:2px}
+#undo-delivery{margin-top:7px}
+@media(max-width:680px){
+ .room-view .landscape,.room-objects{inset:0 0 auto;height:auto;aspect-ratio:1586/992}
+ .room-view:has(.residence:not([hidden])){height:auto;min-height:unset;padding-top:63%;display:block}
+ .residence{position:relative;inset:auto;width:auto;max-height:none;margin:0 8px 8px}
+}
+#continue-story{width:100%;margin:2px 0 11px}
+#free-cell,#recover-cell{font-size:13px}
