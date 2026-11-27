@@ -245,3 +245,41 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 #roombar .chip{padding:5px 14px 5px 6px;font-size:16px}
 #roombar .chip img{width:40px;height:40px}
 #roomnote{position:absolute;left:50%;top:92px;transform:translateX(-50%);z-index:20;font-size:19px;letter-spacing:.08em;color:#efe6d0;text-shadow:0 2px 10px #000}
+
+/* 성 생활 · EP006 이후 */
+#life,#market{z-index:10}
+#life{background:linear-gradient(90deg,#0b0910da 0%,#0b09106a 44%,transparent 76%)}
+.life-banner{position:absolute;top:49px;left:58px;color:#fff2d3;text-shadow:0 2px 12px #0b0910}
+.life-banner h2{font-size:43px;font-weight:500;letter-spacing:.18em;margin:0 0 10px}
+#lifeBalance,#marketGold{color:#f3d59b;font-size:22px;font-weight:700}
+#lifeNav{position:absolute;left:58px;right:58px;bottom:38px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.activity{position:relative;min-height:80px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px;padding:14px 22px;text-align:left;color:#fff1d2;background:linear-gradient(145deg,#282037f5,#14101ff5);border:1px solid #b99a63a8;border-radius:14px}
+button.activity{cursor:pointer}
+button.activity:hover,.activity:focus-visible{border-color:#ffdd9b;background:#33283f}
+.activity strong{font-size:23px;font-weight:600;letter-spacing:.06em}
+.activity span{font-size:16px;color:#d7c8ac}
+#market{background:radial-gradient(ellipse at top,#2a2441,#100c1a 70%)}
+.market-content{position:absolute;inset:100px 58px 48px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;align-content:start;overflow:auto;touch-action:pan-y}
+.market-content .activity{min-height:240px;padding:22px}
+.market-content .activity .btn{width:100%;margin-top:12px}
+.market-item{display:flex;align-items:center;gap:10px}
+.market-item img{width:58px;height:58px;object-fit:contain}
+.shop-art{width:125px;height:125px;object-fit:contain;align-self:center}
+.market-content.journal{display:block;max-width:820px;margin:auto;padding-right:12px}
+.journal-page{position:relative!important;padding:18px 22px;margin-bottom:14px}
+.journal-page h4{font-size:23px;margin:0 0 10px;color:#f3d59b}
+.journal-page p{font-size:18px;line-height:1.7;margin:6px 0;color:#e9dcc4;white-space:pre-line}
+#workEnergy{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ffdd9b;font-size:17px}
+#workEnergy[hidden],#recoverEnergy[hidden]{display:none}
+#recoverEnergy{min-width:0;padding:5px 10px;font-size:15px}
+#nivebig.care-target{touch-action:none;cursor:pointer}
+#nivebig.care-receive{filter:drop-shadow(0 0 16px #f8d576)}
+#carebar .btn{touch-action:none}
+.care-ghost{position:absolute;pointer-events:none;z-index:51;transform:translate(-50%,-50%);padding:8px 14px;border-radius:12px;background:#392d45;color:#fff3ce;border:1px solid #f3d59b}
+#skipDialogue{position:absolute;top:18px;right:24px;z-index:17}
+#skipDialogue[hidden],#workMaterials[hidden]{display:none}
+#workMaterials{display:flex;gap:7px}
+.material-choice{width:48px;height:41px;border:1px solid #776284;border-radius:9px;background:#2d253e}
+.material-choice img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.material-choice[aria-pressed="true"]{border-color:#f7dfa2;background:#51405a;box-shadow:0 0 7px #edc88770}
+.cell.gen.depleted img{filter:grayscale(.8) brightness(.64)}

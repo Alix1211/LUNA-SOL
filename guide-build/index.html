@@ -34,6 +34,7 @@
     <div id="loc" class="serif"></div>
     <div id="portraits"></div>
     <img id="nivepic" alt="">
+    <button class="btn sm ghost" id="skipDialogue" hidden>장면 대사 넘기기</button>
     <div id="doc" class="serif"><div class="lb"></div><div class="dx"></div></div>
     <div id="dlg" class="serif"><div class="nm"></div><div class="tx"></div><div class="nx">▾</div></div>
   </section>
@@ -77,14 +78,14 @@
     </div>
   </section>
 
-  <!-- 끝 -->
-  <section id="end" class="screen" style="z-index:30;background:rgba(6,5,12,.72);backdrop-filter:blur(6px)">
-    <div class="box panel serif" style="position:absolute;left:50%;top:50%;width:640px;transform:translate(-50%,-50%);padding:40px;text-align:center">
-      <div style="font-size:17px;letter-spacing:.6em;color:var(--gold)">EP 06 · 끝</div>
-      <div style="font-size:40px;letter-spacing:.14em;margin:16px 0 10px;color:#fff3d2">첫 번째 날갯짓</div>
-      <div style="font-size:19px;line-height:1.7;color:#d9d0bc;margin-bottom:26px">여기까지가 첫 안내 구간입니다.<br>이어지는 이야기는 준비 중이에요.</div>
-      <div id="endbtns" style="display:flex;flex-direction:column;gap:10px"></div>
-    </div>
+  <!-- EP006 이후 자유 진행 -->
+  <section id="life" class="screen">
+    <div class="life-banner"><div><h2 class="serif">황혼의 성</h2><div id="lifeBalance"></div></div></div>
+    <nav id="lifeNav" aria-label="성의 활동"></nav>
+  </section>
+  <section id="market" class="screen">
+    <div class="topbar"><h3 class="serif" id="marketTitle"></h3><div class="sp"></div><span id="marketGold"></span><button class="btn sm ghost" id="marketBack">돌아가기</button></div>
+    <div id="marketContent" class="market-content"></div>
   </section>
 
   <!-- 메뉴 -->
@@ -109,6 +110,8 @@
 </div>
 <script src="story.js"></script>
 <script src="core.js"></script>
+<script src="ep007.js"></script>
+<script src="life.js"></script>
 <script src="game.js"></script>
 </body>
 </html>
