@@ -26,7 +26,7 @@
 | `story/scripts/EP003_SCRIPT_R01.md` | 제3화: 갑작스러운 기사 (카엘 첫 등장·담장 보강) | R01 집필 초안 |
 | `story/scripts/EP004_SCRIPT_R01.md` | 제4화: 어머니의 자장가 (음악 상자·보육 환경 보강) | R01 집필 초안 |
 | `story/scripts/EP005_SCRIPT_R01.md` | 제5화: 말라붙은 샘 (미라 첫 등장·샘 복원·은빛 조각) | R01 집필 초안 |
-| `story/scripts/EP006_SCRIPT_R01.md` | 제6화: 첫 번째 날갯짓 (루미 부화·카엘 첫 목격) | R01 집필 초안 |
+| `story/scripts/EP006_SCRIPT_R01.md` | 제6화: 첫 번째 날갯짓 (니베 부화·카엘 첫 목격) | R01 집필 초안 |
 
 **집필 진행:** 본편 실제 대본 **6 / 90화** 완료. 다음 화는 EP007 「잠긴 서재」.
 
