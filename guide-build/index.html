@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#06050c">
+<title>LUNA SOL · 루나솔</title>
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+
+  <!-- 배경(타이틀·이야기 공용) -->
+  <div id="bgwrap"><div class="vig"></div></div>
+
+  <!-- 타이틀 -->
+  <section id="title" class="screen">
+    <div class="shade"></div>
+    <div class="logo serif">
+      <div class="moon"></div>
+      <h1>LUNA SOL</h1>
+      <div class="sub">루 나 솔</div>
+    </div>
+    <div class="btns">
+      <button class="btn pulse" id="bContinue">이어하기</button>
+      <button class="btn ghost" id="bNew">새로 시작</button>
+    </div>
+  </section>
+
+  <!-- 이야기 -->
+  <section id="story" class="screen">
+    <div id="loc" class="serif"></div>
+    <div id="portraits"></div>
+    <img id="nivepic" alt="">
+    <div id="doc" class="serif"><div class="lb"></div><div class="dx"></div></div>
+    <div id="dlg" class="serif"><div class="nm"></div><div class="tx"></div><div class="nx">▾</div></div>
+  </section>
+
+  <!-- 작업 -->
+  <section id="work" class="screen">
+    <div class="panel" id="lp"></div>
+    <div class="panel" id="bp">
+      <div id="board"></div>
+      <div id="store"></div>
+    </div>
+  </section>
+
+  <!-- 결과 연출 -->
+  <section id="result" class="screen">
+    <div id="rbox" class="serif"><div class="t1"></div><div class="t2"></div><div class="t3"></div></div>
+    <div id="rcont" class="serif">탭하여 계속</div>
+  </section>
+
+  <!-- 방 꾸미기 -->
+  <section id="room" class="screen">
+    <div id="roombg" style="position:absolute;inset:0"></div>
+    <div class="vig"></div>
+    <div id="roomui"></div>
+    <div class="topbar"><h3 class="serif">방 꾸미기</h3><div class="sp"></div><button class="btn sm ghost" id="roomBack">돌아가기</button></div>
+    <div id="roomnote" class="serif"></div>
+    <div id="roombar"></div>
+  </section>
+
+  <!-- 니베 돌보기 -->
+  <section id="care" class="screen">
+    <div id="carebg" style="position:absolute;inset:0"></div>
+    <div class="vig"></div>
+    <div class="topbar"><h3 class="serif">니베 돌보기</h3><div class="sp"></div><button class="btn sm ghost" id="careBack">돌아가기</button></div>
+    <div id="hearts"><b>♥</b><span id="hv">0</span><span class="bar"><i id="hbar"></i></span></div>
+    <div id="carenote" class="serif"></div>
+    <img id="nivebig" alt="">
+    <div id="carebar">
+      <button class="btn" id="bPet">쓰다듬기</button>
+      <button class="btn" id="bWater">물 주기</button>
+    </div>
+  </section>
+
+  <!-- 끝 -->
+  <section id="end" class="screen" style="z-index:30;background:rgba(6,5,12,.72);backdrop-filter:blur(6px)">
+    <div class="box panel serif" style="position:absolute;left:50%;top:50%;width:640px;transform:translate(-50%,-50%);padding:40px;text-align:center">
+      <div style="font-size:17px;letter-spacing:.6em;color:var(--gold)">EP 06 · 끝</div>
+      <div style="font-size:40px;letter-spacing:.14em;margin:16px 0 10px;color:#fff3d2">첫 번째 날갯짓</div>
+      <div style="font-size:19px;line-height:1.7;color:#d9d0bc;margin-bottom:26px">여기까지가 첫 안내 구간입니다.<br>이어지는 이야기는 준비 중이에요.</div>
+      <div id="endbtns" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </section>
+
+  <!-- 메뉴 -->
+  <section id="menu" class="screen"><div class="box panel serif"><h2>메뉴</h2><div id="menubtns" style="display:flex;flex-direction:column;gap:12px"></div></div></section>
+
+  <!-- 챕터 카드 -->
+  <section id="chapter" class="screen"><div class="in serif"><div class="ep"></div><div class="ln"></div><div class="tt"></div></div></section>
+
+  <button class="menubtn" id="menuBtn" style="display:none">☰</button>
+  <canvas id="fx"></canvas>
+  <div id="flash"></div>
+  <div id="fade"></div>
+  <div id="hl" style="position:absolute;z-index:58;pointer-events:none;border-radius:16px;border:3px solid #fff0c0;box-shadow:0 0 0 9999px rgba(4,3,10,.62),0 0 30px rgba(255,230,160,.7);display:none"></div>
+  <div id="tipcard" class="panel serif" style="display:none;z-index:59;position:absolute;width:480px;padding:24px 28px">
+    <div id="tipt" style="font-size:22px;font-weight:700;color:#f8ecc9;letter-spacing:.06em;margin-bottom:8px"></div>
+    <div id="tipx" style="font-size:19px;line-height:1.6;color:#e8dfc8;margin-bottom:16px"></div>
+    <div style="text-align:right"><button class="btn sm pulse" id="tipok" style="min-width:120px">확인</button></div>
+  </div>
+  <div id="coach"></div>
+  <div id="toast" class="serif"></div>
+  <img id="ghost" alt="">
+</div>
+<script src="story.js"></script>
+<script src="core.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
