@@ -1,0 +1,28 @@
+name: Publish Luna Sol V6
+on:
+  push:
+    branches: [codex/luna-sol-v6]
+    paths:
+      - complete-build/**
+      - .github/workflows/luna-sol-v6-release.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build offline HTML
+        run: python3 complete-build/bundle.py LUNA_SOL_COMPLETE_V6.html
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view luna-sol-v6 >/dev/null 2>&1; then
+            exit 0
+          fi
+          gh release create luna-sol-v6 LUNA_SOL_COMPLETE_V6.html \
+            --target "$GITHUB_SHA" --title "LUNA SOL V6" \
+            --notes "Standalone offline HTML. The separated source is in complete-build/."
