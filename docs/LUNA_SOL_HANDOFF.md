@@ -48,3 +48,8 @@
 ## 2026-11-28 빌드 기록
 
 - [첫 빌드](https://github.com/Alix1211/LUNA-SOL/actions/runs/46140043197)에서 게임 ZIP 배포는 성공했습니다. APK는 AndroidX 빌드 설정 누락으로 중단했습니다. `android/gradle.properties`에 `android.useAndroidX=true`를 추가했습니다.
+
+- [AndroidX 수정 후 빌드](https://github.com/Alix1211/LUNA-SOL/actions/runs/46142583222)는 APK 컴파일, 서명 검증, 배포 및 게임 ZIP 공개까지 성공했습니다. [설치 검증용 APK](https://github.com/Alix1211/LUNA-SOL/releases/download/luna-sol-app-preview/luna-sol-preview.apk)는 `com.lunasol.game.preview`입니다.
+- 공개된 빌드 `3ee4d44311139bb299188dbd50fca975d4a59ae9`의 업데이트 ZIP을 다시 내려받아 SHA-256과 압축 무결성, 필수 게임 파일을 확인했습니다.
+- 정식 서명 키를 별도 생성했습니다. GitHub 계정 로그인 후 Actions Secrets에 등록하고 정식 APK를 다시 빌드해야 합니다. 개인 키나 암호를 저장소 문서·코드에 기록하지 않습니다.
+- 태블릿 실기기의 설치, 저장 복원, 업데이트 후 이어하기는 검증 전입니다.
