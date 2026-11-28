@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#06050c">
+<title>LUNA SOL · 루나솔</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+
+  <!-- 배경(타이틀·이야기 공용) -->
+  <div id="bgwrap"><div class="vig"></div></div>
+
+  <!-- 타이틀 -->
+  <section id="title" class="screen">
+    <div class="shade"></div>
+    <div class="logo serif">
+      <div class="moon"></div>
+      <h1>LUNA SOL</h1>
+      <div class="sub">루 나 솔</div>
+    </div>
+    <div class="btns">
+      <button class="btn pulse" id="bContinue">이어하기</button>
+      <button class="btn ghost" id="bNew">새로 시작</button>
+    </div>
+  </section>
+
+
+  <style>
+  .chapter-preview{position:absolute;z-index:21;bottom:31px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:12px}
+  #title.on + style + .chapter-preview{display:flex}
+  .chapter-preview select{width:260px;color:#f5e3b9;background:#2e253b;border:1px solid #957b92;border-radius:8px;padding:10px 14px;font:inherit}
+  </style>
+  <div class="chapter-preview"><select id="previewEpisode" aria-label="체험할 회차"></select>
+  <button class="btn sm ghost" type="button" id="previewStart" title="진행 상황을 저장하지 않는 체험입니다">회차 체험</button></div>
+  <!-- 이야기 -->
+  <section id="story" class="screen">
+    <div id="loc" class="serif"></div>
+    <p id="scenePlace" class="serif" hidden></p>
+    <div id="portraits"></div>
+    <img id="nivepic" alt="">
+    <button class="btn sm ghost" id="skipDialogue" hidden>장면 대사 넘기기</button>
+    <div id="doc" class="serif"><div class="lb"></div><div class="dx"></div></div>
+    <div id="dlg" class="serif"><div class="nm"></div><div class="tx"></div><div class="nx">▾</div></div>
+  </section>
+
+  <section id="cutscene" aria-label="이야기 일러스트" hidden>
+    <button type="button" id="cutsceneContinue">
+      <img id="cutsceneArt" alt="">
+      <span class="btn sm">계속</span>
+    </button>
+  </section>
+
+  <!-- 작업 -->
+  <section id="work" class="screen">
+    <div class="panel" id="lp"></div>
+    <div class="panel" id="bp">
+      <div id="board"></div>
+      <div id="store"></div>
+    </div>
+  </section>
+
+  <!-- 결과 연출 -->
+  <section id="result" class="screen">
+    <div id="rbox" class="serif"><div class="t1"></div><div class="t2"></div><div class="t3"></div></div>
+    <div id="rcont" class="serif">탭하여 계속</div>
+  </section>
+
+  <!-- 방 꾸미기 -->
+  <section id="room" class="screen">
+    <div id="roombg" style="position:absolute;inset:0"></div>
+    <div class="vig"></div>
+    <div id="roomui"></div>
+    <div class="topbar"><h3 class="serif">방 꾸미기</h3><div class="sp"></div><button class="btn sm ghost" id="roomBack">돌아가기</button></div>
+    <div id="roomnote" class="serif"></div>
+    <div id="roombar"></div>
+  </section>
+
+  <!-- 니베 돌보기 -->
+  <section id="care" class="screen">
+    <div id="carebg" style="position:absolute;inset:0"></div>
+    <div class="vig"></div>
+    <div class="topbar"><h3 class="serif" id="careTitle">니베 돌보기</h3><div class="sp"></div><button class="btn sm ghost" id="careBack">돌아가기</button></div>
+    <nav id="dragonPortraits" aria-label="드래곤 선택"></nav>
+    <div id="carenote" class="serif" aria-live="polite"></div>
+    <img id="nivebig" alt="" draggable="false">
+    <aside id="dragonGrowth" hidden aria-label="드래곤 육성"></aside>
+    <div id="carebar" aria-label="돌봄 도구"></div>
+  </section>
+
+  <!-- EP006 이후 자유 진행 -->
+  <section id="life" class="screen">
+    <div class="life-banner"><div><h2 class="serif">황혼의 성</h2><div id="lifeBalance"></div></div></div>
+    <div id="lifeLinks">
+      <button type="button" class="btn sm ghost" id="lifeForest" hidden>숲에서 채집</button>
+      <button type="button" class="btn sm ghost" id="lifeJournal">지난 이야기</button>
+    </div>
+    <p id="lifeAside" hidden></p>
+    <nav id="lifeNav" aria-label="성의 활동"></nav>
+  </section>
+  <section id="market" class="screen">
+    <div class="topbar"><h3 class="serif" id="marketTitle"></h3><span id="marketRegion"></span><div class="sp"></div><span id="marketGold"></span><button class="btn sm ghost" id="marketBack">돌아가기</button></div>
+    <div id="marketContent" class="market-content"></div>
+  </section>
+
+  <section id="trade" class="screen" aria-labelledby="tradeTitle">
+    <div class="trade-card panel">
+      <img class="trade-art" alt="">
+      <h3 id="tradeTitle" class="serif">등불 연결 고리</h3>
+      <p id="tradeCost"></p>
+      <button id="tradeAccept" class="btn" type="button"></button>
+      <button id="tradeBack" class="btn ghost" type="button">성으로 돌아가기</button>
+    </div>
+  </section>
+
+  <!-- 메뉴 -->
+  <section id="menu" class="screen"><div class="box panel serif"><h2>메뉴</h2><div id="menubtns"></div></div></section>
+
+  <!-- 챕터 카드 -->
+  <section id="chapter" class="screen"><div class="in serif"><div class="ep"></div><div class="ln"></div><div class="tt"></div></div></section>
+
+  <button class="menubtn" id="menuBtn" style="display:none" aria-label="메뉴"></button>
+  <button class="menubtn" id="fullscreenBtn" type="button" aria-label="전체화면" title="전체화면" aria-pressed="false" disabled>⛶</button>
+  <div id="moonMotes" aria-hidden="true" hidden><i style="--x:9%;--y:12%;--period:14s;--lag:-2s"></i><i style="--x:22%;--y:57%;--period:19s;--lag:-4s"></i><i style="--x:36%;--y:22%;--period:17s;--lag:-8s"></i><i style="--x:49%;--y:70%;--period:18s;--lag:-8s"></i><i style="--x:62%;--y:35%;--period:16s;--lag:-2s"></i><i style="--x:74%;--y:59%;--period:20s;--lag:-1s"></i><i style="--x:83%;--y:26%;--period:17s;--lag:-11s"></i><i style="--x:94%;--y:19%;--period:19s;--lag:-8s"></i></div>
+<canvas id="fx"></canvas>
+  <div id="flash"></div>
+  <div id="fade"></div>
+  <div id="hl" style="position:absolute;z-index:58;pointer-events:none;border-radius:16px;border:3px solid #fff0c0;box-shadow:0 0 0 9999px rgba(4,3,10,.62),0 0 30px rgba(255,230,160,.7);display:none"></div>
+  <div id="tipcard" class="panel serif" style="display:none;z-index:59;position:absolute;width:480px;padding:24px 28px">
+    <div id="tipt" style="font-size:22px;font-weight:700;color:#f8ecc9;letter-spacing:.06em;margin-bottom:8px"></div>
+    <div id="tipx" style="font-size:19px;line-height:1.6;color:#e8dfc8;margin-bottom:16px"></div>
+    <div style="text-align:right"><button class="btn sm pulse" id="tipok" style="min-width:120px">확인</button></div>
+  </div>
+  <div id="coach"></div>
+  <div id="toast" class="serif"></div>
+  <img id="ghost" alt="">
+</div>
+<script src="js/assets.js"></script>
+<script src="js/story-guide.js"></script>
+<script src="js/core.js"></script>
+<script src="js/episode-07.js"></script>
+<script src="js/episode-08.js"></script>
+<script src="js/episode-09-11.js"></script>
+<script src="js/story-main.js"></script>
+<script src="js/asset-paths.js"></script>
+<script src="js/scene-art.js"></script>
+<script src="js/life.js"></script>
+<script src="js/game.js"></script>
+
+<script src="js/preview.js"></script>
+</body>
+</html>
