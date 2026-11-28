@@ -31,7 +31,7 @@
 
   <style>
   .chapter-preview{position:absolute;z-index:21;bottom:31px;left:50%;transform:translateX(-50%);display:none;align-items:center;gap:12px}
-  #title.on + style + .chapter-preview{display:flex}
+  html[data-dev-preview] #title.on + style + .chapter-preview{display:flex}
   .chapter-preview select{width:260px;color:#f5e3b9;background:#2e253b;border:1px solid #957b92;border-radius:8px;padding:10px 14px;font:inherit}
   </style>
   <div class="chapter-preview"><select id="previewEpisode" aria-label="체험할 회차"></select>
@@ -150,6 +150,13 @@
 <script src="js/life.js"></script>
 <script src="js/game.js"></script>
 
-<script src="js/preview.js"></script>
+<script>
+if(new URLSearchParams(location.search).get('dev-preview')==='1'){
+ document.documentElement.setAttribute('data-dev-preview','');
+ const preview=document.createElement('script');
+ preview.src='js/preview.js';
+ document.body.append(preview);
+}
+</script>
 </body>
 </html>
