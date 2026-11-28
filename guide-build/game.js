@@ -5,7 +5,7 @@ const UI={cur:'title',prev:'story',block:0,menu:false,parked:null,running:false}
 let LB,LW,LR,LC;
 const SCR=['title','story','work','result','room','care','life','market'];
 
-function newState(){return{v:1,pos:{e:0,s:0,ph:'pre',li:0},done:{},board:Array(36).fill(null),store:Array(8).fill(null),size:4,pool:POOL1,
+function newState(){return{v:1,pos:{e:0,s:0,ph:'pre',li:0},done:{},board:Array(36).fill(null),toolboxSlot:0,store:Array(8).fill(null),size:4,pool:POOL1,
  deliv:{},fdeliv:{},ustack:[],hub:false,care:false,ui:{small:false},tips:{},gave:{},scr:0,room:{place:{bed:'s1',lamp:'s2'}},crafted:{},hearts:0,snd:true,hatched:false,life:null}}
 function persist(){if(S)writeSave(S)}
 addEventListener('pagehide',persist);document.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});
@@ -122,26 +122,90 @@ function initWork(){
  $('#aGo').onclick=()=>btnGo();$('#aStore').onclick=()=>btnStore();$('#aUndo').onclick=()=>btnUndo();$('#aDrop').onclick=()=>btnDrop();$('#wBack').onclick=()=>WK.order!=null?closeOrder():closeFree();
  $('#recoverEnergy').onclick=recoverEnergy;
  /* 포인터: 탭 + 끌기 */
- document.addEventListener('pointerdown',e=>{if(UI.cur!=='work'||UI.block||WK.busy)return;const t=e.target.closest('.cell,.sl,.goal');if(!t||!$('#work').contains(t))return;Snd.init();
-  if(t.classList.contains('cell')&&+t.dataset.i===0&&!t.classList.contains('lock')){tapBoard(0);return}
-  WK.drag={t,x:e.clientX,y:e.clientY,on:false,id:null}});
- document.addEventListener('pointermove',e=>{const d=WK.drag;if(!d)return;
-  if(!d.on){if(Math.hypot(e.clientX-d.x,e.clientY-d.y)<14*SC)return;const loc=locOf(d.t);if(!loc||!getAt(loc.w,loc.i))return;d.on=true;d.loc=loc;select(loc.w,loc.i);
-   const g=$('#ghost');g.src=img(getAt(loc.w,loc.i));g.style.display='block';d.t.classList.add('dragging')}
-  const p=toStage(e.clientX,e.clientY),g=$('#ghost');g.style.left=p.x+'px';g.style.top=p.y+'px';
-  $$('.drop').forEach(x=>x.classList.remove('drop'));const u=document.elementFromPoint(e.clientX,e.clientY);const t=u&&u.closest('.cell,.sl,.goal');if(t&&t!==d.t)t.classList.add('drop')});
- const up=e=>{const d=WK.drag;if(!d)return;WK.drag=null;$('#ghost').style.display='none';$$('.drop').forEach(x=>x.classList.remove('drop'));$$('.dragging').forEach(x=>x.classList.remove('dragging'));
-  if(e.type==='pointercancel')return;
-  if(d.on){const u=document.elementFromPoint(e.clientX,e.clientY);const t=u&&u.closest('.cell,.sl,.goal');if(t&&t!==d.t)actOn(t);return}
-  actOn(d.t)};
- document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up)}
-function locOf(t){if(t.classList.contains('cell')){const i=+t.dataset.i;return i===0?null:{w:'b',i}}if(t.classList.contains('sl'))return{w:'s',i:+t.dataset.j};return null}
+ document.addEventListener('pointerdown',e=>{
+  if(UI.cur!=='work'||UI.block||WK.busy||WK.drag||e.button!==0)return;
+  const t=e.target.closest('.cell:not(.lock),.sl,.goal');
+  if(!t||!$('#work').contains(t))return;
+  Snd.init();
+  WK.drag={t,x:e.clientX,y:e.clientY,pointer:e.pointerId,on:false,toolbox:t.classList.contains('gen')};
+ });
+ document.addEventListener('pointermove',e=>{
+  const d=WK.drag;
+  if(!d||d.pointer!==e.pointerId)return;
+  const g=$('#ghost');
+  if(!d.on){
+   if(Math.hypot(e.clientX-d.x,e.clientY-d.y)<14*SC)return;
+   const loc=locOf(d.t);
+   const item=loc&&getAt(loc.w,loc.i);
+   if(!d.toolbox&&!item)return;
+   d.on=true;
+   if(loc)select(loc.w,loc.i);
+   g.src=d.toolbox?asset('item/box.webp'):img(item);
+   g.style.display='block';
+   d.t.classList.add('dragging');
+  }
+  const p=toStage(e.clientX,e.clientY);
+  g.style.left=p.x+'px';
+  g.style.top=p.y+'px';
+  $$('.drop').forEach(x=>x.classList.remove('drop'));
+  const target=dropTarget(e,d);
+  if(target)target.classList.add('drop');
+ });
+ const up=e=>{
+  const d=WK.drag;
+  if(!d||d.pointer!==e.pointerId)return;
+  WK.drag=null;
+  $('#ghost').style.display='none';
+  $$('.drop,.dragging').forEach(x=>x.classList.remove('drop','dragging'));
+  if(e.type==='pointercancel'||UI.cur!=='work'||UI.block||WK.busy)return;
+  if(d.on){
+   const target=dropTarget(e,d);
+   if(!target)return;
+   if(d.toolbox)moveToolbox(+target.dataset.i);
+   else actOn(target);
+  }else if(!d.toolbox||Math.hypot(e.clientX-d.x,e.clientY-d.y)<14*SC){
+   actOn(d.t);
+  }
+ };
+ document.addEventListener('pointerup',up);
+ document.addEventListener('pointercancel',up);
+}
+function dropTarget(e,d){
+ const hit=document.elementFromPoint(e.clientX,e.clientY);
+ const target=hit?.closest(d.toolbox?'.cell:not(.lock)':'.cell:not(.lock):not(.gen),.sl,.goal');
+ return target&&target!==d.t&&$('#work').contains(target)?target:null;
+}
+function locOf(t){
+ if(t.classList.contains('cell')){
+  const i=+t.dataset.i;
+  return i===S.toolboxSlot?null:{w:'b',i};
+ }
+ if(t.classList.contains('sl'))return{w:'s',i:+t.dataset.j};
+ return null;
+}
 function actOn(t){if(t.classList.contains('cell'))tapBoard(+t.dataset.i);else if(t.classList.contains('sl'))tapStore(+t.dataset.j);else if(t.classList.contains('goal'))tapGoal(t.dataset.k)}
 const getAt=(w,i)=>w==='b'?S.board[i]:S.store[i];
 const setAt=(w,i,v)=>{if(w==='b')S.board[i]=v;else S.store[i]=v};
 const unlocked=i=>{const r=Math.floor(i/6),c=i%6;return r<S.size&&c<S.size};
 const storeCap=()=>S.ui.small?8:0;
-function emptyBoard(){const a=[];for(let i=1;i<36;i++)if(unlocked(i)&&!S.board[i])a.push(i);return a.sort((x,y)=>{const rx=Math.floor(x/6),cx=x%6,ry=Math.floor(y/6),cy=y%6;return(rx+cx)-(ry+cy)||rx-ry})}
+function emptyBoard(){
+ const free=[];
+ const {toolboxSlot:slot}=S;
+ const distance=i=>Math.abs(Math.floor(i/6)-Math.floor(slot/6))+Math.abs(i%6-slot%6);
+ for(let i=0;i<S.board.length;i++)if(i!==slot&&unlocked(i)&&!S.board[i])free.push(i);
+ return free.sort((a,b)=>distance(a)-distance(b)||a-b);
+}
+function moveToolbox(to){
+ const from=S.toolboxSlot;
+ if(to===from||!unlocked(to))return;
+ S.board[from]=S.board[to];
+ S.board[to]=null;
+ S.toolboxSlot=to;
+ WK.sel=null;
+ btnDrop.arm=0;
+ Snd.sfx('tap');
+ after(to,'home');
+}
 function emptyStore(){const a=[];for(let j=0;j<storeCap();j++)if(!S.store[j])a.push(j);return a}
 function select(w,i){btnDrop.arm=0;WK.sel={w,i};Snd.sfx('sel');vib(0);after()}
 function deselect(){WK.sel=null;after()}
@@ -161,8 +225,8 @@ function pickRaw(){const M=S.pool;
 function spawn(){const e=emptyBoard();if(!e.length){toast('빈 자리가 없어요. 합치거나 보관해 보세요');Snd.sfx('err');vib(60);return}
  if(S.life&&S.life.energy===0){toast('공구함을 정리하거나 니베를 돌봐 주세요');Snd.sfx('err');return}
  const i=e[0];S.board[i]=pickRaw();
- if(S.life){S.life.energy--;S.life.careSpent++}Snd.sfx('spawn');vib(60);cellFx(0,'home');after(i,'spawn');spark(cellEl(0),6)}
-function tapBoard(i){if(!unlocked(i))return;if(i===0){spawn();return}const it=S.board[i],s=WK.sel;
+ if(S.life){S.life.energy--;S.life.careSpent++}Snd.sfx('spawn');vib(60);cellFx(S.toolboxSlot,'home');after(i,'spawn');spark(cellEl(S.toolboxSlot),6)}
+function tapBoard(i){if(!unlocked(i))return;if(i===S.toolboxSlot){spawn();return}const it=S.board[i],s=WK.sel;
  if(!s){if(it)select('b',i);return}
  if(s.w==='b'&&s.i===i){deselect();return}
  const sit=getAt(s.w,s.i);
@@ -216,9 +280,12 @@ function buildCards(){
  $('#wC').innerHTML=rows.map(r=>`<span class="ch">${r.map(id=>`<img src="${img(id)}">`).join('<i>›</i>')}</span>`).join('')+(rows.length?'<span class="cap">같은 것 2개 → 다음 단계</span>':'')}
 function renderBoard(){$$('#board .cell').forEach((c,i)=>{const lock=!unlocked(i),was=c.classList.contains('lock');
   if(was&&!lock&&c.dataset.k!==undefined&&c.dataset.init){c.classList.add('opened');setTimeout(()=>c.classList.remove('opened'),900)}
-  c.dataset.init=1;c.classList.toggle('lock',lock);c.classList.toggle('gen',i===0&&!lock);
-  if(i===0){c.classList.toggle('depleted',S.life?.energy===0);c.setAttribute('aria-disabled',String(S.life?.energy===0))}
-  const it=lock?'':i===0?'__gen':(S.board[i]||'');
+  const generator=!lock&&i===S.toolboxSlot;
+  c.dataset.init=1;c.classList.toggle('lock',lock);c.classList.toggle('gen',generator);
+  c.classList.toggle('depleted',generator&&S.life?.energy===0);
+  if(generator)c.title='공구함 · 눌러서 재료 꺼내기 · 끌어서 옮기기';
+  else c.removeAttribute('title');
+  const it=lock?'':generator?'__gen':(S.board[i]||'');
   if(c.dataset.k!==it){c.dataset.k=it;c.innerHTML=it===''?'':it==='__gen'?`<img class="it" src="${asset('item/box.webp')}" draggable="false">`:`<img class="it" src="${img(it)}" draggable="false">${pips(it)}`}
   const s=WK.sel,isSel=s&&s.w==='b'&&s.i===i;c.classList.toggle('sel',!!isSel);
   const sit=s&&getAt(s.w,s.i);c.classList.toggle('mate',!!(s&&!isSel&&it&&it!=='__gen'&&canMerge(sit,it)))})}
@@ -237,14 +304,14 @@ function after(fxIdx,cls){renderBoard();renderStore();$$('.goal').forEach(g=>{co
  if(fxIdx>=0&&cls)cellFx(fxIdx,cls)}
 
 /* ---- 코치 ---- */
-function hideCoach(){$('#coach').classList.remove('on');$$('.cell.coach,.cell.gen.ring').forEach(c=>c.classList.remove('coach','ring'))}
+function hideCoach(){$('#coach').classList.remove('on');$$('.cell.coach,.cell.ring').forEach(c=>c.classList.remove('coach','ring'))}
 function showCoach(target,text){const c=$('#coach');c.textContent=text;c.classList.add('on');const h=c.offsetHeight,w=Math.min(330,c.offsetWidth||300);
  if(target.classList.contains('cell')){const b=rectIn($('#board'));const x=b.x+b.w/2-w/2,y=b.y+b.h+22;c.style.setProperty('--ax',(w/2-7)+'px');c.style.left=x+'px';c.style.top=y+'px';c.classList.add('under');return}
  c.classList.remove('under');const r=rectIn(target);let x=r.x+r.w/2-w/2;x=Math.max(10,Math.min(W-w-10,x));let y=r.y-h-16;
  if(y<8){y=r.y+r.h+16;c.style.setProperty('--ax','-40px')}else c.style.setProperty('--ax',(r.x+r.w/2-x-7)+'px');c.style.left=x+'px';c.style.top=y+'px'}
 function coachEval(){hideCoach();if(WK.free||WK.mid!=='M001'||S.done.M001||UI.block||UI.cur!=='work')return;
  const tot=Object.values(S.deliv).reduce((a,b)=>a+b,0);if(tot>0)return;
- const its=[];S.board.forEach((id,i)=>{if(i&&id)its.push([i,id])});const g=cellEl(0);
+ const its=[];S.board.forEach((id,i)=>{if(i!==S.toolboxSlot&&id)its.push([i,id])});const g=cellEl(S.toolboxSlot);
  const goalIt=its.find(([i,id])=>isNeeded(id));
  if(WK.sel&&isNeeded(getAt(WK.sel.w,WK.sel.i))){showCoach($('#aGo'),'[납품하기]를 눌러 보세요');return}
  if(goalIt){const e=cellEl(goalIt[0]);e.classList.add('coach');showCoach(e,'필요한 물건이에요! 눌러서 고른 뒤 [납품하기]');return}
@@ -257,7 +324,7 @@ function coachEval(){hideCoach();if(WK.free||WK.mid!=='M001'||S.done.M001||UI.bl
 function giveItem(id){const e=emptyBoard();if(!e.length)return -1;S.board[e[0]]=id;return e[0]}
 function expand(n){if(S.size>=n)return;S.size=n;renderBoard();Snd.sfx('unlock');vib(200)}
 async function firstTips(mid){if(S.tips[mid])return;
- if(mid==='M001')await tipSeq([{sel:'#board',title:'작업대',text:'상자를 눌러 재료를 꺼내요. 같은 재료 두 개를 합치면 한 단계 위의 재료가 되고, 왼쪽 목록의 물건을 만들어 납품하면 돼요.'}]);
+ if(mid==='M001')await tipSeq([{sel:'#board',title:'작업대',text:'공구함을 누르면 재료가 나오고, 끌면 옮길 수 있어요. 같은 재료 두 개를 합치면 한 단계 위의 재료가 되고, 왼쪽 목록의 물건을 만들어 납품하면 돼요.'}]);
  if(mid==='M002'){expand(5);S.pool=MISS.M002.pool;await sleep(700);
   await tipSeq([{sel:'#board',title:'작업대가 넓어졌어요',text:'5×5 칸으로 넓어졌고, 잔가지와 금 간 돌이 새 재료로 나와요.'}]);
   S.ui.small=true;after();await sleep(150);

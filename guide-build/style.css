@@ -131,7 +131,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;paddin
 .cell.mate:after{content:"";position:absolute;inset:3px;border-radius:11px;border:2px dashed rgba(232,207,154,.75);animation:mate 1.2s ease-in-out infinite}
 @keyframes mate{50%{opacity:.35}}
 .cell.drop{box-shadow:0 0 0 3px #fff2c8,0 0 22px rgba(255,240,200,.7)}
-.cell.gen{background:linear-gradient(150deg,#5b4624,#2c2112);box-shadow:inset 0 0 0 2px rgba(232,207,154,.65),0 0 22px rgba(255,206,120,.25),inset 0 2px 6px rgba(0,0,0,.5)}
+.cell.gen{cursor:grab;background:linear-gradient(150deg,#5b4624,#2c2112);box-shadow:inset 0 0 0 2px rgba(232,207,154,.65),0 0 22px rgba(255,206,120,.25),inset 0 2px 6px rgba(0,0,0,.5)}
 .cell.gen.ring:before{content:"";position:absolute;inset:-6px;border-radius:18px;border:3px solid #fff0c0;animation:ring 1.1s ease-out infinite}
 @keyframes ring{0%{transform:scale(.9);opacity:.95}100%{transform:scale(1.25);opacity:0}}
 .cell.coach:before{content:"";position:absolute;inset:-5px;border-radius:17px;border:3px solid #fff0c0;animation:ring 1.1s ease-out infinite}
