@@ -1,0 +1,47 @@
+﻿배경 ID,장소,주요 사용처,별도 배치 요소,WebP 파일,가로,세로
+BG-01,성의 정원 지하 맥점,10화 정원 하부와 이후 재방문,"수로 끝, 닫힌 석판, 은빛 발광",backgrounds/BG-01_castle_garden_undercroft.webp,2000,1200
+BG-02,마을 북쪽의 낡은 돌다리,12~13화 수색 경로,"갈림길 표지, 낮은 발판, 발자국",backgrounds/BG-02_north_village_stone_bridge.webp,2000,1200
+BG-03,뿌리 안쪽 알 보금자리,13~14·20~22화,"녹색 알, 낮은 받침, 두 새끼 용 자리",backgrounds/BG-03_root_hollow_nursery.webp,2000,1200
+BG-04,이벨린의 약초쉼터와 작업대,14~18화,"가마솥, 말린 약초, 채집병, 보호약",backgrounds/BG-04_eveline_herb_shelter.webp,2000,1200
+BG-05,갈라진 나무와 뒤쪽 공터,14~15·18화,"갈라진 껍질, 보호대, 회복한 잎",backgrounds/BG-05_split_tree_clearing.webp,2000,1200
+BG-06,숲 동굴 입구와 안전 통로,16~17화,"길잡이 표식, 낮은 등불, 낙석 받침",backgrounds/BG-06_silver_forest_cave_approach.webp,2000,1200
+BG-07,숲 동굴 안쪽과 장치 자리,16~17화,"방치된 장비, 회수 후의 빈자리",backgrounds/BG-07_silver_forest_cave_chamber.webp,2000,1200
+BG-08,은빛 숲 기록관,19~20화,"낮은 서가, 문서 보호함, 표지판",backgrounds/BG-08_silver_forest_archive.webp,2000,1200
+BG-09,숲 중심나무와 깊은 뿌리 맥점,18~19·22화,"물길, 석조 받침, 새잎과 들어오는 빛",backgrounds/BG-09_silver_forest_heart_tree.webp,2000,1200
+BG-10,광산 마을 고갯길과 브린 공방 외관,"23~24화, 이후 출입","마을 표지, 공방 입구의 잔해와 문틀",backgrounds/BG-10_mining_village_pass.webp,2000,1200
+BG-11,브린 공방 내부와 화로,23~33·79·84화,"연구대, 연료, 송풍구, 화로 불씨, 조립대",backgrounds/BG-11_bryn_forge_workshop.webp,2000,1200
+BG-12,광산 갱도와 오래된 문,25~33화,"경고 표식, 지지대, 레일과 광석 수레",backgrounds/BG-12_mine_gallery_old_door.webp,2000,1200
+BG-13,광산 하부 맥점과 삼포 흔적,29~33화,"받침, 보존함, 통로 발광",backgrounds/BG-13_deep_mine_node.webp,2000,1200
+BG-14,북풍 항구 부두와 정박한 배,34~45화,"로엔의 배와 보급품, 선착장 안개·정박 상태",backgrounds/BG-14_northwind_harbor_wharf.webp,2000,1200
+BG-15,항만 창고·운송 장부 작업대,34~41화,"화물 선반, 장부, 방습 덮개",backgrounds/BG-15_harbor_cargo_ledger_hall.webp,2000,1200
+BG-16,등대 아래 광장과 계단,34~44화,"계단 발판, 난간, 보급 설비",backgrounds/BG-16_lighthouse_lower_square.webp,2000,1200
+BG-17,등대 상부 렌즈실,36~44화,"렌즈 받침, 교체 렌즈, 광선",backgrounds/BG-17_lighthouse_upper_lens_room.webp,2000,1200
+BG-18,항구 치료소와 공용 대기 자리,37~39·42화,"의료 물자, 약초 상자, 의자",backgrounds/BG-18_harbor_clinic.webp,2000,1200
+BG-19,난파선 접근 수역과 회수 작업대,40~41화,"부표, 회수 밧줄, 회수 상자",backgrounds/BG-19_wreck_salvage_inlet.webp,2000,1200
+BG-20,항구 옛 수로와 바다 맥점,44화,"수로 표식, 관찰 발판, 물빛",backgrounds/BG-20_harbor_old_tidal_node.webp,2000,1200
+BG-21,태양 신전 진입로와 부조 광장,45~46·56화,"통행 표식, 가림막, 정비 전후 계단",backgrounds/BG-21_sun_temple_relief_court.webp,2000,1200
+BG-22,태양 신전 상층 회랑과 통풍로,46~49·52화,"통풍문, 벽화 파편, 관찰대",backgrounds/BG-22_sun_temple_upper_gallery.webp,2000,1200
+BG-23,태양 신전 기록·광학 보관 석실,47~55화,"보존함, 계약 열람대, 렌즈 흔적, 빈 받침",backgrounds/BG-23_sun_temple_optical_archive.webp,2000,1200
+BG-24,상층 보호 석실과 알 자리,46·49·51화,"하늘색 알, 차양, 보호 받침",backgrounds/BG-24_sun_temple_protective_vault.webp,2000,1200
+BG-25,태양 신전 제단과 맥점,50~56화,"봉인 회로 상태, 벽화, 제단 발광",backgrounds/BG-25_sun_temple_altar.webp,2000,1200
+BG-26,북방 설원 고갯길과 국경 초소,57~59화,"눈길 표식, 쉼터, 난방과 통행 발판",backgrounds/BG-26_northern_snow_pass_outpost.webp,2000,1200
+BG-27,북방 외곽 마을·온실,59·61·63화,"차광 덮개, 얼어붙은 길과 정리된 길",backgrounds/BG-27_northern_village_greenhouse.webp,2000,1200
+BG-28,북방 공동 보급 창고,57~68화,"보급 더미, 보온 상자, 배분 표식",backgrounds/BG-28_northern_community_storehouse.webp,2000,1200
+BG-29,왕궁 대기실·공용 회담실,60·62·67화,"가구, 기록대, 회의 배열",backgrounds/BG-29_northern_palace_common_chamber.webp,2000,1200
+BG-30,왕궁 아래 병동·연구실,59~68화,"병상, 대기석, 약장과 연구 도구",backgrounds/BG-30_north_palace_infirmary.webp,2000,1200
+BG-31,북방 봉인 동굴과 보호 별관,63~68화,"검은 알 보호 받침, 외곽 통로와 완충 시설",backgrounds/BG-31_northern_sealed_cave_annex.webp,2000,1200
+BG-32,북방 맥점과 달 성역으로 가는 관문,68~69화,"안전 완충대, 북쪽 길 표지",backgrounds/BG-32_northern_node_moon_gate.webp,2000,1200
+BG-33,달 성역 산길과 바깥문,69·73·78·80화,"통행 표식과 임시 쉼터, 바깥문",backgrounds/BG-33_lunar_sanctuary_outer_gate.webp,2000,1200
+BG-34,달의 정원과 낮은 수로,69~74·80화,"흐르는 물, 주변 쉼터와 기록대",backgrounds/BG-34_lunar_sanctuary_garden.webp,2000,1200
+BG-35,달 성역 기록실,71~74화,문서·기억석 보관함과 비교 기록대,backgrounds/BG-35_lunar_sanctuary_records.webp,2000,1200
+BG-36,세레나의 휴식실과 회복 장치,70~77화,"침상 자리, 물길, 비추출 회복 장치, 개체 배치",backgrounds/BG-36_serena_resting_hall.webp,2000,1200
+BG-37,황금회의 제단과 비상 대피로,75~76화,"비상 통로, 차단 장치, 철수 표식",backgrounds/BG-37_gold_order_altar_evacuation.webp,2000,1200
+BG-38,달의 제단과 맥점,77~80화,"접근 발판, 활성 광원, 왕도로 가는 표식",backgrounds/BG-38_lunar_altar_node.webp,2000,1200
+BG-39,옛 왕도 남쪽 관문과 거리,81~89화,"가로등, 통행표, 배분 시설과 새벽 상태",backgrounds/BG-39_old_capital_south_gate.webp,2000,1200
+BG-40,왕도 외곽 피난소·치료와 배급,81~89화,"물펌프, 병상, 보급 상자, 대피 통로",backgrounds/BG-40_old_capital_refuge.webp,2000,1200
+BG-41,왕도 기록 보존소와 회랑,82~89화,"열람대, 조사 기록 선반, 봉인 기록",backgrounds/BG-41_old_capital_public_archive.webp,2000,1200
+BG-42,왕도 공개 회의·운영실,83~89화,"공개 게시판, 운영대, 관측·배분 표식",backgrounds/BG-42_old_capital_public_council.webp,2000,1200
+BG-43,옛 왕도 봉인실과 마지막 맥점,85·88~89화,"봉인 상태, 안전 관측대, 평시 조명",backgrounds/BG-43_old_capital_last_seal.webp,2000,1200
+BG-44,왕도의 안전 전망길,88~89화,"난간, 길의 조명, 황혼에서 아침으로 바뀌는 하늘",backgrounds/BG-44_old_capital_safe_overlook.webp,2000,1200
+BG-45,성의 공용 치료실·공방,90화 및 엔딩 후,"미라 진료대, 브린 작업대, 공동 일정판",backgrounds/BG-45_castle_shared_clinic_workshop.webp,2000,1200
+BG-46,해가 돌아온 성 정원·생활길,90화 및 엔딩 후,"기존 정원의 앵글 유지, 일조·화단·벤치·수로",backgrounds/BG-46_castle_garden_morning.webp,2000,1200

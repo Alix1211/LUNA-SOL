@@ -1,0 +1,115 @@
+﻿품목 ID,한국어 이름,시트,행,열,WebP 파일
+MI-01_01,다듬은 받침목,MS-01,1,1,icons/MI-01_01.webp
+MI-01_02,쐐기 접합재,MS-01,1,2,icons/MI-01_02.webp
+MI-01_03,길고 두꺼운 구조재,MS-01,1,3,icons/MI-01_03.webp
+MI-01_04,지지석,MS-01,1,4,icons/MI-01_04.webp
+MI-01_05,기초 석판,MS-01,1,5,icons/MI-01_05.webp
+MI-01_06,철물 연결구 세트,MS-01,1,6,icons/MI-01_06.webp
+MI-02_01,삼 섬유 다발,MS-01,2,1,icons/MI-02_01.webp
+MI-02_02,땋은 노끈,MS-01,2,2,icons/MI-02_02.webp
+MI-02_03,긴 선박 밧줄,MS-01,2,3,icons/MI-02_03.webp
+MI-02_04,짠 두꺼운 천,MS-01,2,4,icons/MI-02_04.webp
+MI-02_05,완충 깔개,MS-01,2,5,icons/MI-02_05.webp
+MI-02_06,방풍 덮개,MS-01,2,6,icons/MI-02_06.webp
+MI-03_01,작업용 작은 선반,MS-01,3,1,icons/MI-03_01.webp
+MI-03_02,자재 보관장,MS-01,3,2,icons/MI-03_02.webp
+MI-03_03,낮은 장식장,MS-01,3,3,icons/MI-03_03.webp
+MI-03_04,정원 벤치,MS-01,3,4,icons/MI-03_04.webp
+MI-03_05,창문 덧문,MS-01,3,5,icons/MI-03_05.webp
+MI-03_06,커튼 묶음,MS-01,3,6,icons/MI-03_06.webp
+MI-04_01,목재 더미,MS-02,1,1,icons/MI-04_01.webp
+MI-04_02,철물함,MS-02,1,2,icons/MI-04_02.webp
+MI-04_03,석재 수레,MS-02,1,3,icons/MI-04_03.webp
+MI-04_04,재봉 바구니,MS-02,1,4,icons/MI-04_04.webp
+MI-04_05,정원 씨앗 주머니,MS-02,1,5,icons/MI-04_05.webp
+MI-04_06,숲 채집 바구니,MS-02,1,6,icons/MI-04_06.webp
+MI-05_01,짧은 표지 말뚝,MS-02,2,1,icons/MI-05_01.webp
+MI-05_02,표식용 파란 천띠,MS-02,2,2,icons/MI-05_02.webp
+MI-05_03,경로 표지 등불,MS-02,2,3,icons/MI-05_03.webp
+MI-05_04,낮은 통행 발판,MS-02,2,4,icons/MI-05_04.webp
+MI-05_05,뿌리 틈 지지대,MS-02,2,5,icons/MI-05_05.webp
+MI-05_06,둥지 보호 덮개,MS-02,2,6,icons/MI-05_06.webp
+MI-06_01,빈 채집병,MS-02,3,1,icons/MI-06_01.webp
+MI-06_02,표본 보관 상자,MS-02,3,2,icons/MI-06_02.webp
+MI-06_03,손질한 약초,MS-02,3,3,icons/MI-06_03.webp
+MI-06_04,약초 압착 도구,MS-02,3,4,icons/MI-06_04.webp
+MI-06_05,가마솥용 약초 준비 묶음,MS-02,3,5,icons/MI-06_05.webp
+MI-06_06,나무 보호용 약병,MS-02,3,6,icons/MI-06_06.webp
+MI-07_01,씨앗,MS-03,1,1,icons/MI-07_01.webp
+MI-07_02,새싹 모종,MS-03,1,2,icons/MI-07_02.webp
+MI-07_03,작은 묘목,MS-03,1,3,icons/MI-07_03.webp
+MI-07_04,토분,MS-03,1,4,icons/MI-07_04.webp
+MI-07_05,작은 물조리개,MS-03,1,5,icons/MI-07_05.webp
+MI-07_06,화단 틀,MS-03,1,6,icons/MI-07_06.webp
+MI-08_01,뿌리채소 묶음,MS-03,2,1,icons/MI-08_01.webp
+MI-08_02,손질한 식재료 접시,MS-03,2,2,icons/MI-08_02.webp
+MI-08_03,식사 꾸러미,MS-03,2,3,icons/MI-08_03.webp
+MI-08_04,여행 식량 상자,MS-03,2,4,icons/MI-08_04.webp
+MI-08_05,식수통,MS-03,2,5,icons/MI-08_05.webp
+MI-08_06,등짐 가방,MS-03,2,6,icons/MI-08_06.webp
+MI-09_01,짚자리,MS-03,3,1,icons/MI-09_01.webp
+MI-09_02,둥지 쿠션,MS-03,3,2,icons/MI-09_02.webp
+MI-09_03,얕은 물그릇,MS-03,3,3,icons/MI-09_03.webp
+MI-09_04,손질 수건,MS-03,3,4,icons/MI-09_04.webp
+MI-09_05,깃털 장난감,MS-03,3,5,icons/MI-09_05.webp
+MI-09_06,놀이공,MS-03,3,6,icons/MI-09_06.webp
+MI-10_01,산열매 묶음,MS-04,1,1,icons/MI-10_01.webp
+MI-10_02,손질한 생선,MS-04,1,2,icons/MI-10_02.webp
+MI-10_03,기본식 그릇,MS-04,1,3,icons/MI-10_03.webp
+MI-10_04,간식 접시,MS-04,1,4,icons/MI-10_04.webp
+MI-10_05,가벼운 차양,MS-04,1,5,icons/MI-10_05.webp
+MI-10_06,포근한 휴식 매트,MS-04,1,6,icons/MI-10_06.webp
+MI-11_01,거친 광석,MS-04,2,1,icons/MI-11_01.webp
+MI-11_02,선별 광석,MS-04,2,2,icons/MI-11_02.webp
+MI-11_03,정제 광석,MS-04,2,3,icons/MI-11_03.webp
+MI-11_04,내화 벽돌,MS-04,2,4,icons/MI-11_04.webp
+MI-11_05,연료 꾸러미,MS-04,2,5,icons/MI-11_05.webp
+MI-11_06,소형 송풍 부품,MS-04,2,6,icons/MI-11_06.webp
+MI-12_01,광석 운반 바구니,MS-04,3,1,icons/MI-12_01.webp
+MI-12_02,갱도 지주 세트,MS-04,3,2,icons/MI-12_02.webp
+MI-12_03,레일 연결쇠,MS-04,3,3,icons/MI-12_03.webp
+MI-12_04,공용 공구함,MS-04,3,4,icons/MI-12_04.webp
+MI-12_05,화로 외장 틀,MS-04,3,5,icons/MI-12_05.webp
+MI-12_06,마력 차단용 보관함,MS-04,3,6,icons/MI-12_06.webp
+MI-13_01,방습 포장천,MS-05,1,1,icons/MI-13_01.webp
+MI-13_02,보급 상자,MS-05,1,2,icons/MI-13_02.webp
+MI-13_03,선박용 판재,MS-05,1,3,icons/MI-13_03.webp
+MI-13_04,선박 연결쇠,MS-05,1,4,icons/MI-13_04.webp
+MI-13_05,선착장 발판,MS-05,1,5,icons/MI-13_05.webp
+MI-13_06,물에 뜨는 부표,MS-05,1,6,icons/MI-13_06.webp
+MI-14_01,일반 광학 유리,MS-05,2,1,icons/MI-14_01.webp
+MI-14_02,다듬은 광학 유리,MS-05,2,2,icons/MI-14_02.webp
+MI-14_03,렌즈 고정 받침,MS-05,2,3,icons/MI-14_03.webp
+MI-14_04,등대 난간의 이음쇠,MS-05,2,4,icons/MI-14_04.webp
+MI-14_05,수로 덮개,MS-05,2,5,icons/MI-14_05.webp
+MI-14_06,회수용 밧줄 걸이,MS-05,2,6,icons/MI-14_06.webp
+MI-15_01,벽화 보호판,MS-05,3,1,icons/MI-15_01.webp
+MI-15_02,통풍문 틀,MS-05,3,2,icons/MI-15_02.webp
+MI-15_03,관측 받침,MS-05,3,3,icons/MI-15_03.webp
+MI-15_04,기록대 틀,MS-05,3,4,icons/MI-15_04.webp
+MI-15_05,문서 보호함,MS-05,3,5,icons/MI-15_05.webp
+MI-15_06,중립 연결구,MS-05,3,6,icons/MI-15_06.webp
+MI-16_01,보온 직물,MS-06,1,1,icons/MI-16_01.webp
+MI-16_02,난방 부품,MS-06,1,2,icons/MI-16_02.webp
+MI-16_03,보온 물자 상자,MS-06,1,3,icons/MI-16_03.webp
+MI-16_04,눈길 디딤판,MS-06,1,4,icons/MI-16_04.webp
+MI-16_05,방풍 천막 묶음,MS-06,1,5,icons/MI-16_05.webp
+MI-16_06,공동 식량함,MS-06,1,6,icons/MI-16_06.webp
+MI-17_01,약병 받침,MS-06,2,1,icons/MI-17_01.webp
+MI-17_02,치료용 직물 묶음,MS-06,2,2,icons/MI-17_02.webp
+MI-17_03,환자 대기 의자,MS-06,2,3,icons/MI-17_03.webp
+MI-17_04,침상 칸막이,MS-06,2,4,icons/MI-17_04.webp
+MI-17_05,휴대 진료 가방,MS-06,2,5,icons/MI-17_05.webp
+MI-17_06,아늑한 회복실 등불,MS-06,2,6,icons/MI-17_06.webp
+MI-18_01,완충 받침,MS-06,3,1,icons/MI-18_01.webp
+MI-18_02,개폐 손잡이,MS-06,3,2,icons/MI-18_02.webp
+MI-18_03,보조 회로 부품,MS-06,3,3,icons/MI-18_03.webp
+MI-18_04,차단함 외장,MS-06,3,4,icons/MI-18_04.webp
+MI-18_05,안전 난간 연결구,MS-06,3,5,icons/MI-18_05.webp
+MI-18_06,회복 장치 받침,MS-06,3,6,icons/MI-18_06.webp
+MI-19_01,물펌프 연결부,MS-07,1,1,icons/MI-19_01.webp
+MI-19_02,예비 수동 손잡이,MS-07,1,2,icons/MI-19_02.webp
+MI-19_03,배급 선반 부품,MS-07,1,3,icons/MI-19_03.webp
+MI-19_04,안내 게시판,MS-07,2,1,icons/MI-19_04.webp
+MI-19_05,공용 작업대 부품,MS-07,2,2,icons/MI-19_05.webp
+MI-19_06,생활길 배수 덮개,MS-07,2,3,icons/MI-19_06.webp
