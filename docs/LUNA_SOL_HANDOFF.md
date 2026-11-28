@@ -44,3 +44,7 @@
 서명 설정 전 빌드는 `com.lunasol.game.preview`로 분리됩니다. 이 APK에서도 게임 업데이트를 확인할 수 있습니다. Actions의 임시 키로 만든 APK는 서로 다른 빌드 사이의 덮어쓰기를 보장할 수 없으므로, 장기 설치 기준은 같은 개인 키로 서명한 정식 APK입니다.
 
 실기기 확인 항목은 설치 후 첫 실행, 비행기 모드 재실행, 가로 전체 화면, 실제 저장 복원, Wi-Fi에서 버전 전환 뒤 같은 진행 이어하기입니다. 개발자가 확인한 빌드 결과와 실기기 결과를 다음 로그에 추가하세요.
+
+## 2026-11-28 빌드 기록
+
+- [첫 빌드](https://github.com/Alix1211/LUNA-SOL/actions/runs/46140043197)에서 게임 ZIP 배포는 성공했습니다. APK는 AndroidX 빌드 설정 누락으로 중단했습니다. `android/gradle.properties`에 `android.useAndroidX=true`를 추가했습니다.
