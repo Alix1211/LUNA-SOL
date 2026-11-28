@@ -1,0 +1,116 @@
+name: Luna Sol Android and game publishing
+on:
+  push:
+    branches: [codex/luna-sol-android]
+    paths: ['complete-build/**', 'android/**', '.github/workflows/luna-sol-android.yml']
+  workflow_dispatch:
+    inputs:
+      build_apk:
+        description: 'Build or refresh the Android installer'
+        type: boolean
+        default: true
+permissions:
+  contents: write
+concurrency:
+  group: luna-sol-live
+  cancel-in-progress: false
+
+jobs:
+  game:
+    if: github.ref == 'refs/heads/codex/luna-sol-android'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build verified game bundle
+        run: |
+          set -e
+          for script in complete-build/js/*.js; do node --check "$script"; done
+          cd complete-build
+          printf '%s\n' "$GITHUB_SHA" > app-version.txt
+          zip -qr "$RUNNER_TEMP/game-$GITHUB_SHA.zip" index.html style.css js assets app-version.txt
+          python3 - "$RUNNER_TEMP" <<'PY'
+          import hashlib, json, os, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          rev = os.environ['GITHUB_SHA']
+          pack = root / ('game-' + rev + '.zip')
+          (root / 'latest.json').write_text(json.dumps({'format': 1, 'version': rev, 'sha256': hashlib.sha256(pack.read_bytes()).hexdigest()}))
+          PY
+      - name: Publish game for installed apps
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view luna-sol-live >/dev/null 2>&1; then
+            gh release create luna-sol-live --target "$GITHUB_SHA" --title "LUNA SOL · 게임 업데이트" --notes "The Android app receives game updates from this release."
+          fi
+          gh release upload luna-sol-live "$RUNNER_TEMP/game-$GITHUB_SHA.zip" --clobber
+          gh release upload luna-sol-live "$RUNNER_TEMP/latest.json" --clobber
+
+  apk:
+    if: github.ref == 'refs/heads/codex/luna-sol-android'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      KEYSTORE_B64: ${{ secrets.LUNA_KEYSTORE_B64 }}
+      LUNA_KEYSTORE_PASSWORD: ${{ secrets.LUNA_KEYSTORE_PASSWORD }}
+      LUNA_KEY_ALIAS: ${{ secrets.LUNA_KEY_ALIAS }}
+      LUNA_KEY_PASSWORD: ${{ secrets.LUNA_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Check if the APK needs rebuilding
+        id: rebuild
+        env:
+          FORCE_APK: ${{ inputs.build_apk }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          if [ "$FORCE_APK" = true ] || [ -z "$BEFORE_SHA" ] || [ "$BEFORE_SHA" = 0000000000000000000000000000000000000000 ] || ! git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null || ! git diff --quiet "$BEFORE_SHA" "$GITHUB_SHA" -- android .github/workflows/luna-sol-android.yml; then
+            echo 'apk=yes' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-java@v4
+        if: steps.rebuild.outputs.apk == 'yes'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.rebuild.outputs.apk == 'yes'
+        with:
+          gradle-version: '8.10.2'
+      - name: Prepare launcher and offline game
+        if: steps.rebuild.outputs.apk == 'yes'
+        run: |
+          mkdir -p android/app/src/main/assets/web android/app/src/main/res/drawable-nodpi
+          cp -r complete-build/index.html complete-build/style.css complete-build/js complete-build/assets android/app/src/main/assets/web/
+          printf '%s\n' "$GITHUB_SHA" > android/app/src/main/assets/web/app-version.txt
+          python3 -m pip install --quiet Pillow
+          python3 - <<'PY'
+          from PIL import Image
+          src = Image.open('android/art/luna-app.png').convert('RGBA')
+          src.resize((192,192), Image.Resampling.LANCZOS).save('android/app/src/main/res/drawable-nodpi/luna_app.png')
+          PY
+      - name: Build and publish installer
+        if: steps.rebuild.outputs.apk == 'yes'
+        run: |
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$LUNA_KEYSTORE_PASSWORD" ] && [ -n "$LUNA_KEY_ALIAS" ] && [ -n "$LUNA_KEY_PASSWORD" ]; then
+            export LUNA_SIGNING_FILE="$RUNNER_TEMP/luna-signing.p12"
+            printf '%s' "$KEYSTORE_B64" | base64 --decode > "$LUNA_SIGNING_FILE"
+            gradle -p android :app:assembleRelease --no-daemon
+            asset=luna-sol.apk
+            tag=luna-sol-app
+            title="LUNA SOL · Android"
+            cp android/app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/$asset"
+          else
+            gradle -p android :app:assembleDebug --no-daemon
+            asset=luna-sol-preview.apk
+            tag=luna-sol-app-preview
+            title="LUNA SOL · Android 미리보기"
+            cp android/app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/$asset"
+          fi
+          sdk="$ANDROID_HOME"
+          if [ -z "$sdk" ]; then sdk="$ANDROID_SDK_ROOT"; fi
+          apksigner=$(find "$sdk/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          "$apksigner" verify "$RUNNER_TEMP/$asset"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --target "$GITHUB_SHA" --title "$title" --notes "Android launcher for LUNA SOL. Game content updates independently from this APK."
+          fi
+          gh release upload "$tag" "$RUNNER_TEMP/$asset" --clobber

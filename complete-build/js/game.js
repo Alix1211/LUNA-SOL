@@ -733,6 +733,19 @@ function openMenu(){if(UI.menu)return;UI.menu=true;UI.block++;refreshMenuBtn();c
  if(S.life&&UI.cur==='life'&&S.pos.e>=11)add('재료 도감',()=>{closeMenu();openMarket('materials')},false,'ghost','journal');
  if(S.life&&UI.cur==='life')add('상점',()=>{closeMenu();openMarket('shop')},false,'ghost','shop');
  add('소리 '+(S.snd?'켜짐':'꺼짐'),()=>{S.snd=!S.snd;Snd.setOn(S.snd);persist();openMenu.re()},false,'ghost');
+ if(window.LunaBridge){
+  if(window.LunaBridge.hasUpdate?.())add('최신 버전 적용',()=>{persist();window.LunaBridge.applyUpdate()},UI.preview,'ghost','lantern');
+  add('저장 내보내기',()=>{persist();window.LunaBridge.exportSave()},UI.preview,'ghost','journal');
+  add('저장 불러오기',()=>window.LunaBridge.importSave(),UI.preview,'ghost','journal');
+ }else if(!UI.preview){
+  add('저장 내보내기',()=>{
+   persist();
+   const link=document.createElement('a');
+   const path=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));
+   link.href=path;link.download='lunasol-save.json';link.click();
+   setTimeout(()=>URL.revokeObjectURL(path),1000);
+  },false,'ghost','journal');
+ }
  add('처음 화면으로',()=>{persist();location.reload()},false,'ghost');
  $('#menu').classList.add('on')}
 openMenu.re=()=>{UI.menu=false;UI.block--;openMenu()};

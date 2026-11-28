@@ -1,0 +1,33 @@
+
+plugins { id 'com.android.application' version '8.8.2' }
+
+def signingFile = System.getenv('LUNA_SIGNING_FILE')
+android {
+    namespace 'com.lunasol.game'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.lunasol.game'
+        minSdk 26
+        targetSdk 35
+        versionCode Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
+        versionName '1.0'
+    }
+    signingConfigs {
+        if (signingFile) {
+            production {
+                storeFile file(signingFile)
+                storePassword System.getenv('LUNA_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('LUNA_KEY_ALIAS')
+                keyPassword System.getenv('LUNA_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        debug { applicationIdSuffix '.preview'; versionNameSuffix '-preview' }
+        release {
+            if (signingFile) signingConfig signingConfigs.production
+        }
+    }
+}
+dependencies { implementation 'androidx.webkit:webkit:1.12.1' }

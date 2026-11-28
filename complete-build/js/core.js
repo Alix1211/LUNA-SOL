@@ -112,8 +112,28 @@ function centerOf(e){const r=rectIn(e);return{x:r.x+r.w/2,y:r.y+r.h/2}}
 const KEY='lunasol.guide.v1',KEY2='lunasol.guide.v1.bak';let memSave=null;
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}};
-function loadSave(){let s=lsGet(KEY);try{if(s)return JSON.parse(s)}catch(e){}s=lsGet(KEY2);try{if(s)return JSON.parse(s)}catch(e){}try{return memSave?JSON.parse(memSave):null}catch(e){return null}}
-function writeSave(o){const s=JSON.stringify(o);memSave=s;const old=lsGet(KEY);if(old&&old!==s){try{if(JSON.parse(old)?.v===1)lsSet(KEY2,old)}catch(e){}}lsSet(KEY,s)}
+function validSave(raw){
+ try{
+  const data=JSON.parse(raw);
+  if(data?.v===1&&Number.isInteger(data.pos?.e)&&data.pos.e>=0&&data.pos.e<=90&&
+     Number.isInteger(data.pos.s)&&data.pos.s>=0&&Array.isArray(data.board)&&data.board.length===36&&
+     Array.isArray(data.store)&&data.store.length===8)return data;
+ }catch(error){}
+ return null;
+}
+function loadSave(){
+ let native='';
+ try{native=window.LunaBridge?.load()||''}catch(error){}
+ return validSave(native)||validSave(lsGet(KEY))||validSave(lsGet(KEY2))||validSave(memSave);
+}
+function writeSave(o){
+ const s=JSON.stringify(o);
+ memSave=s;
+ const old=lsGet(KEY);
+ if(old&&old!==s&&validSave(old))lsSet(KEY2,old);
+ lsSet(KEY,s);
+ try{window.LunaBridge?.save(s)}catch(error){}
+}
 function hasSave(){return !!loadSave()}
 
 /* ---------- 데이터 ---------- */
